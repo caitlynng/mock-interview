@@ -31,9 +31,12 @@ const NavigationBar: React.FC = () => {
 
   return (
     <Nav>
-      <h3>
-        <Link to='/'>Home Page</Link>
-      </h3>
+      <Link to='/'>All Questions</Link>
+
+      <Link to='/behavioral'>Behavioral</Link>
+
+      <Link to='/technical'>Technical</Link>
+
       <Links>
         <LinkComponent />
       </Links>

@@ -13,7 +13,7 @@ export const AppWrapper = styled.div`
 export const primaryColor = '#4d4dff';
 export const primaryColorHover = '#6666ff';
 
-export const materialDefaultTheme: { [key: string]: any } = {
+export const materialDefaultTheme: { [key: string]: object } = {
   MuiTextField: {
     styleOverrides: {
       root: {
@@ -71,7 +71,7 @@ export const materialDefaultTheme: { [key: string]: any } = {
   },
 };
 
-export const authPageDefaultTheme: { [key: string]: any } = {
+export const authPageDefaultTheme: { [key: string]: object } = {
   MuiButton: {
     styleOverrides: {
       root: {

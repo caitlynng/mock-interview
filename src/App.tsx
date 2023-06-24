@@ -22,7 +22,7 @@ const App: React.FC = () => (
           <BrowserRouter>
             <Routes>
               <Route
-                path='/'
+                path='*'
                 element={
                   <PrivateRoute>
                     <InterviewPanel />

@@ -7,8 +7,8 @@ export const Nav = styled.nav`
   align-items: center;
   justify-content: center;
   padding: 0px 10px;
-  background-color: ${primaryColor};
   min-height: 70px;
+  gap: 10px;
 `;
 
 export const Links = styled.div`

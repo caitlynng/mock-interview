@@ -1,25 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { Question } from 'types';
 interface InterviewState {
   behavioralQuestions: Question[];
   technicalQuestions: Question[];
-  answers: Answer[];
-}
-
-interface Question {
-  id: string;
-  content: string;
-}
-
-interface Answer {
-  questionId: string;
-  answer: string;
 }
 
 const initialState: InterviewState = {
   behavioralQuestions: [],
   technicalQuestions: [],
-  answers: [],
 };
 
 const interviewSlice = createSlice({
@@ -58,25 +46,40 @@ const interviewSlice = createSlice({
         );
       }
     },
-    updateAnswer: (state, action: PayloadAction<Answer>) => {
-      const { questionId, answer } = action.payload;
-      const questionIndex = state.behavioralQuestions.findIndex(
-        (question) => question.id === questionId,
-      );
-      if (questionIndex !== -1) {
-        state.answers[questionIndex] = { questionId, answer };
-      } else {
-        const technicalQuestionIndex = state.technicalQuestions.findIndex(
+    updateQuestion: (
+      state,
+      action: PayloadAction<{
+        type: 'behavioral' | 'technical';
+        questionId: string;
+        updatedQuestion: Question;
+      }>,
+    ) => {
+      const { type, questionId, updatedQuestion } = action.payload;
+      if (type === 'behavioral') {
+        const questionIndex = state.behavioralQuestions.findIndex(
           (question) => question.id === questionId,
         );
-        if (technicalQuestionIndex !== -1) {
-          state.answers[technicalQuestionIndex] = { questionId, answer };
+        if (questionIndex !== -1) {
+          state.behavioralQuestions[questionIndex] = {
+            ...state.behavioralQuestions[questionIndex],
+            ...updatedQuestion,
+          };
+        }
+      } else if (type === 'technical') {
+        const questionIndex = state.technicalQuestions.findIndex(
+          (question) => question.id === questionId,
+        );
+        if (questionIndex !== -1) {
+          state.technicalQuestions[questionIndex] = {
+            ...state.behavioralQuestions[questionIndex],
+            ...updatedQuestion,
+          };
         }
       }
     },
   },
 });
 
-export const { addQuestion, deleteQuestion, updateAnswer } =
+export const { addQuestion, deleteQuestion, updateQuestion } =
   interviewSlice.actions;
 export default interviewSlice.reducer;
