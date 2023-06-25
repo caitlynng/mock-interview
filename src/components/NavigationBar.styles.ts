@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { primaryColor } from 'App.styles';
 
 export const Nav = styled.nav`
   display: flex;
