@@ -7,6 +7,5 @@ export const QuestionOptionWrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: 20px;
-  max-width: 80%;
   margin: 1em auto;
 `;

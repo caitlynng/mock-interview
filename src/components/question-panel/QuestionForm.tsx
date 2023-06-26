@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import { AuthContext } from 'context/AuthContext';
@@ -18,6 +20,9 @@ const QuestionForm: React.FC = () => {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [type, setType] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [topic, setTopic] = useState('');
+  const [error, setError] = useState(false);
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value as string);
   };
@@ -26,11 +31,28 @@ const QuestionForm: React.FC = () => {
     setAnswer(e.target.value as string);
   };
   const handleTypeChange = (e: SelectChangeEvent) => {
+    console.log('run');
     setType(e.target.value as string);
   };
+  const handleDifficultyChange = (e: SelectChangeEvent) => {
+    setDifficulty(e.target.value as string);
+  };
+  const handleTopicChange = (e: SelectChangeEvent) => {
+    setTopic(e.target.value as string);
+  };
 
-  const handleAddQuestion = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleClearQuestion = () => {
+    setQuestion('');
+    setAnswer('');
+    setTopic('');
+    setType('');
+    setDifficulty('');
+  };
+  const handleAddQuestion = async () => {
+    if (!question || !answer || !type) {
+      setError(true);
+      return;
+    }
 
     const currentDate = new Date();
     const milliseconds = currentDate.getTime();
@@ -39,12 +61,11 @@ const QuestionForm: React.FC = () => {
     const newQuestion = {
       id: questionId,
       content: question,
-      topic: '',
-      difficulty: '',
+      topic: topic,
+      difficulty: difficulty,
       answer: answer,
       type: type,
     };
-
     dispatch(addQuestion(newQuestion));
 
     try {
@@ -60,70 +81,102 @@ const QuestionForm: React.FC = () => {
       console.log(error.message);
     }
 
-    setQuestion('');
-    setAnswer('');
+    handleClearQuestion();
   };
 
   const questionOptions = [
     {
       option: 'Type',
       selections: ['Behavioral', 'Technical'],
+      handleChange: handleTypeChange,
+      value: type,
+      required: true,
     },
     {
       option: 'Dificulty',
       selections: ['Easy', 'Medium', 'Hard'],
+      handleChange: handleDifficultyChange,
+      value: difficulty,
+      required: false,
     },
     {
       option: 'Topic',
       selections: ['JavaCcript', 'Typscript', 'MongoDB'],
+      handleChange: handleTopicChange,
+      value: topic,
+      required: false,
     },
   ];
   return (
     <Wrapper>
-      <form onSubmit={handleAddQuestion}>
-        <QuestionOptionWrapper>
-          {questionOptions.map((item, index) => {
-            return (
-              <Box sx={{ minWidth: 50, flex: 1 }} key={index}>
-                <FormControl fullWidth>
-                  <InputLabel id={`${item.option}-select-label`}>
-                    {item.option}
-                  </InputLabel>
-                  <Select
-                    labelId={`${item.option}-select-label`}
-                    id={item.option}
-                    value={item.option}
-                    label={item.option}
-                    onChange={handleTypeChange}
-                  >
-                    {item.selections.map((q, i) => {
-                      return (
-                        <MenuItem key={i} value={q}>
-                          {q.charAt(0).toUpperCase() + q.slice(1)}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Box>
-            );
-          })}
-        </QuestionOptionWrapper>
+      <QuestionOptionWrapper>
+        {questionOptions.map((item, index) => {
+          return (
+            <Box sx={{ minWidth: 50, flex: 1 }} key={index}>
+              <FormControl fullWidth>
+                <InputLabel id={`${item.option}-select-label`}>
+                  {item.option}
+                </InputLabel>
+                <Select
+                  labelId={`${item.option}-select-label`}
+                  id={item.option}
+                  value={item.value}
+                  label={item.option}
+                  onChange={item.handleChange}
+                  error={item.required && error && !item.value}
+                >
+                  {item.selections.map((q, i) => {
+                    return (
+                      <MenuItem key={i} value={q}>
+                        {q.charAt(0).toUpperCase() + q.slice(1)}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Box>
+          );
+        })}
+      </QuestionOptionWrapper>
 
-        <input
-          type='text'
-          placeholder='question'
-          value={question}
-          onChange={handleQuestionChange}
-        />
-        <input
-          type='text'
-          placeholder='answer'
-          value={answer}
-          onChange={handleAnswerChange}
-        />
-        <button type='submit'>Save</button>
-      </form>
+      <Box component='form' noValidate autoComplete='off'>
+        <FormControl fullWidth>
+          <TextField
+            error={error && !question}
+            required
+            id='question'
+            label='Question'
+            value={question}
+            onChange={handleQuestionChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </FormControl>
+      </Box>
+
+      <Box component='form' noValidate autoComplete='off'>
+        <FormControl fullWidth>
+          <TextField
+            error={error && !answer}
+            required
+            id='answer'
+            label='Answer'
+            value={answer}
+            onChange={handleAnswerChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </FormControl>
+      </Box>
+
+      <Button variant='contained' type='submit' onClick={handleAddQuestion}>
+        Save
+      </Button>
+      <Button type='button' variant='text' onClick={handleClearQuestion}>
+        Clear
+      </Button>
     </Wrapper>
   );
 };
