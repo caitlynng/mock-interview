@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, useContext } from 'react';
+import React, { useState, ChangeEvent, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
@@ -31,7 +31,6 @@ const QuestionForm: React.FC = () => {
     setAnswer(e.target.value as string);
   };
   const handleTypeChange = (e: SelectChangeEvent) => {
-    console.log('run');
     setType(e.target.value as string);
   };
   const handleDifficultyChange = (e: SelectChangeEvent) => {
@@ -66,13 +65,13 @@ const QuestionForm: React.FC = () => {
       answer: answer,
       type: type,
     };
+
     dispatch(addQuestion(newQuestion));
 
     try {
       await addDoc(
-        collection(firestoreDB, 'questions', questionId, 'question'),
+        collection(firestoreDB, 'questionList', currentUserId, 'question'),
         {
-          createdBy: currentUserId,
           createdAt: Timestamp.fromDate(currentDate),
           ...newQuestion,
         },

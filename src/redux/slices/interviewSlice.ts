@@ -32,10 +32,13 @@ const interviewSlice = createSlice({
         state.questions.splice(questionIndex, 1);
       }
     },
+    setQuestions(state, { payload: questions }: PayloadAction<Question[]>) {
+      state.questions = questions;
+    },
   },
 });
 
-export const { addQuestion, updateQuestion, deleteQuestion } =
+export const { addQuestion, updateQuestion, deleteQuestion, setQuestions } =
   interviewSlice.actions;
 
 export default interviewSlice.reducer;

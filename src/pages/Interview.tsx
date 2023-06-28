@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import NavigationBar from 'components/NavigationBar';
 import { InterviewWrapper } from './Interview.styles';
-import QuestionList from 'components/question-panel/QuestionList';
+import QuestionList from 'components/question-panel/QuestionPanel';
 
 import { Routes, Route } from 'react-router-dom';
 const Interview: React.FC = () => {
