@@ -71,11 +71,22 @@ const QuestionList: React.FC<QuestionListProps> = ({
   const handleQuestionClick = (questionId: string) => {
     setSelectedQuestionId(questionId);
   };
+
+  const filteredQuestions = questions.filter((question) => {
+    if (
+      (type && question.type !== type) ||
+      (difficulty && question.difficulty !== difficulty) ||
+      (topic && question.topic !== topic)
+    ) {
+      return false;
+    }
+    return true;
+  });
   return (
     <div>
       <QuestionFilter options={questionOptions} error={false} />
       <button onClick={handleResetFilter}>Reset</button>
-      {questions.map((question) => (
+      {filteredQuestions.map((question) => (
         <div key={question.id} onClick={() => handleQuestionClick(question.id)}>
           {question.content}
           {selectedQuestionId === question.id && (
