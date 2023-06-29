@@ -3,16 +3,16 @@ import { useDispatch } from 'react-redux';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 import { AuthContext } from 'context/AuthContext';
 import { addQuestion } from 'redux/slices/interviewSlice';
-import { Wrapper, QuestionOptionWrapper } from './QuestionForm.styles';
+import { Wrapper } from './QuestionForm.styles';
+import { Question, fieldOptions } from 'types';
+import QuestionFilter from './QuestionFilter';
 
 const QuestionForm: React.FC = () => {
   const { currentUserId } = useContext(AuthContext);
@@ -23,6 +23,7 @@ const QuestionForm: React.FC = () => {
   const [difficulty, setDifficulty] = useState('');
   const [topic, setTopic] = useState('');
   const [error, setError] = useState(false);
+
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value as string);
   };
@@ -46,6 +47,7 @@ const QuestionForm: React.FC = () => {
     setTopic('');
     setType('');
     setDifficulty('');
+    setError(false);
   };
   const handleAddQuestion = async () => {
     if (!question || !answer || !type) {
@@ -57,7 +59,7 @@ const QuestionForm: React.FC = () => {
     const milliseconds = currentDate.getTime();
     const questionId = milliseconds.toString();
 
-    const newQuestion = {
+    const newQuestion: Question = {
       id: questionId,
       content: question,
       topic: topic,
@@ -86,21 +88,21 @@ const QuestionForm: React.FC = () => {
   const questionOptions = [
     {
       option: 'Type',
-      selections: ['Behavioral', 'Technical'],
+      selections: fieldOptions.type,
       handleChange: handleTypeChange,
       value: type,
       required: true,
     },
     {
       option: 'Dificulty',
-      selections: ['Easy', 'Medium', 'Hard'],
+      selections: fieldOptions.difficulty,
       handleChange: handleDifficultyChange,
       value: difficulty,
       required: false,
     },
     {
       option: 'Topic',
-      selections: ['JavaCcript', 'Typscript', 'MongoDB'],
+      selections: fieldOptions.topic,
       handleChange: handleTopicChange,
       value: topic,
       required: false,
@@ -108,35 +110,7 @@ const QuestionForm: React.FC = () => {
   ];
   return (
     <Wrapper>
-      <QuestionOptionWrapper>
-        {questionOptions.map((item, index) => {
-          return (
-            <Box sx={{ minWidth: 50, flex: 1 }} key={index}>
-              <FormControl fullWidth>
-                <InputLabel id={`${item.option}-select-label`}>
-                  {item.option}
-                </InputLabel>
-                <Select
-                  labelId={`${item.option}-select-label`}
-                  id={item.option}
-                  value={item.value}
-                  label={item.option}
-                  onChange={item.handleChange}
-                  error={item.required && error && !item.value}
-                >
-                  {item.selections.map((q, i) => {
-                    return (
-                      <MenuItem key={i} value={q}>
-                        {q.charAt(0).toUpperCase() + q.slice(1)}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Box>
-          );
-        })}
-      </QuestionOptionWrapper>
+      <QuestionFilter options={questionOptions} error={error} />
 
       <Box component='form' noValidate autoComplete='off'>
         <FormControl fullWidth>

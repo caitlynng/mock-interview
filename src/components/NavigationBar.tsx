@@ -33,10 +33,6 @@ const NavigationBar: React.FC = () => {
     <Nav>
       <Link to='/'>All Questions</Link>
 
-      <Link to='/behavioral'>Behavioral</Link>
-
-      <Link to='/technical'>Technical</Link>
-
       <Links>
         <LinkComponent />
       </Links>

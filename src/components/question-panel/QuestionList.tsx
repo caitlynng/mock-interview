@@ -2,10 +2,13 @@ import { useEffect, useContext, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { RootState } from 'redux/store';
+import { SelectChangeEvent } from '@mui/material/Select';
 import { Question } from 'types';
 import fetchAllQuestions from './useFetchQuestions';
 import { AuthContext } from 'context/AuthContext';
 import { setQuestions } from 'redux/slices/interviewSlice';
+import { fieldOptions } from 'types';
+import QuestionFilter from './QuestionFilter';
 
 interface QuestionListProps {
   questions: Question[];
@@ -21,6 +24,47 @@ const QuestionList: React.FC<QuestionListProps> = ({
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
     null,
   );
+  const [type, setType] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [topic, setTopic] = useState('');
+  const handleTypeChange = (e: SelectChangeEvent) => {
+    setType(e.target.value as string);
+  };
+  const handleDifficultyChange = (e: SelectChangeEvent) => {
+    setDifficulty(e.target.value as string);
+  };
+  const handleTopicChange = (e: SelectChangeEvent) => {
+    setTopic(e.target.value as string);
+  };
+  const handleResetFilter = () => {
+    setTopic('');
+    setType('');
+    setDifficulty('');
+  };
+  const questionOptions = [
+    {
+      option: 'Type',
+      selections: fieldOptions.type,
+      handleChange: handleTypeChange,
+      value: type,
+      required: false,
+    },
+    {
+      option: 'Dificulty',
+      selections: fieldOptions.difficulty,
+      handleChange: handleDifficultyChange,
+      value: difficulty,
+      required: false,
+    },
+    {
+      option: 'Topic',
+      selections: fieldOptions.topic,
+      handleChange: handleTopicChange,
+      value: topic,
+      required: false,
+    },
+  ];
+
   useEffect(() => {
     fetchAllQuestions(currentUserId);
   }, [fetchAllQuestions, currentUserId]);
@@ -29,6 +73,8 @@ const QuestionList: React.FC<QuestionListProps> = ({
   };
   return (
     <div>
+      <QuestionFilter options={questionOptions} error={false} />
+      <button onClick={handleResetFilter}>Reset</button>
       {questions.map((question) => (
         <div key={question.id} onClick={() => handleQuestionClick(question.id)}>
           {question.content}
