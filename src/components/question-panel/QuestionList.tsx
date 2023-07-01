@@ -9,6 +9,7 @@ import { AuthContext } from 'context/AuthContext';
 import { setQuestions } from 'redux/slices/interviewSlice';
 import { fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
+import QuestionComponent from './Question';
 
 interface QuestionListProps {
   questions: Question[];
@@ -21,9 +22,7 @@ const QuestionList: React.FC<QuestionListProps> = ({
   fetchAllQuestions,
 }) => {
   const { currentUserId } = useContext(AuthContext);
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
-    null,
-  );
+
   const [type, setType] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [topic, setTopic] = useState('');
@@ -68,9 +67,6 @@ const QuestionList: React.FC<QuestionListProps> = ({
   useEffect(() => {
     fetchAllQuestions(currentUserId);
   }, [fetchAllQuestions, currentUserId]);
-  const handleQuestionClick = (questionId: string) => {
-    setSelectedQuestionId(questionId);
-  };
 
   const filteredQuestions = questions.filter((question) => {
     if (
@@ -86,16 +82,8 @@ const QuestionList: React.FC<QuestionListProps> = ({
     <div>
       <QuestionFilter options={questionOptions} error={false} />
       <button onClick={handleResetFilter}>Reset</button>
-      {filteredQuestions.map((question) => (
-        <div key={question.id} onClick={() => handleQuestionClick(question.id)}>
-          {question.content}
-          {selectedQuestionId === question.id && (
-            <div>
-              <p>Difficulty: {question.difficulty}</p>
-              <p>Topic: {question.topic}</p>
-            </div>
-          )}
-        </div>
+      {filteredQuestions.map((question, index) => (
+        <QuestionComponent question={question} key={index} />
       ))}
     </div>
   );
