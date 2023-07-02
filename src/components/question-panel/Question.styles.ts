@@ -36,7 +36,7 @@ export const QuestionTheme: { [key: string]: any } = {
       },
     },
   },
-  Chip: {
+  MuiChip: {
     styleOverrides: {
       root: {
         cursor: 'pointer',
