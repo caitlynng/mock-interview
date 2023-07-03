@@ -82,8 +82,12 @@ const QuestionList: React.FC<QuestionListProps> = ({
     <div>
       <QuestionFilter options={questionOptions} error={false} />
       <button onClick={handleResetFilter}>Reset</button>
-      {filteredQuestions.map((question, index) => (
-        <QuestionComponent question={question} key={index} />
+      {filteredQuestions.map((question) => (
+        <QuestionComponent
+          question={question}
+          key={question.id}
+          index={question.id}
+        />
       ))}
     </div>
   );

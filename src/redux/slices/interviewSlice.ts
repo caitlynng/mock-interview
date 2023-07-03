@@ -15,7 +15,7 @@ const interviewSlice = createSlice({
     addQuestion: (state, action: PayloadAction<Question>) => {
       state.questions.push(action.payload);
     },
-    updateQuestion: (state, action: PayloadAction<Question>) => {
+    editQuestion: (state, action: PayloadAction<Question>) => {
       const { id, ...updatedQuestion } = action.payload;
       const questionIndex = state.questions.findIndex(
         (question) => question.id === id,
@@ -38,7 +38,7 @@ const interviewSlice = createSlice({
   },
 });
 
-export const { addQuestion, updateQuestion, deleteQuestion, setQuestions } =
+export const { addQuestion, editQuestion, deleteQuestion, setQuestions } =
   interviewSlice.actions;
 
 export default interviewSlice.reducer;

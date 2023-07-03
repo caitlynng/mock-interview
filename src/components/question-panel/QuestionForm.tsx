@@ -14,16 +14,28 @@ import { Wrapper } from './QuestionForm.styles';
 import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 
-const QuestionForm: React.FC = () => {
+interface QuestionFormProps {
+  updatedQuestion: Question | undefined;
+  editing: boolean;
+  setEditing: (editing: boolean) => void;
+}
+const QuestionForm: React.FC<QuestionFormProps> = ({
+  updatedQuestion,
+  editing,
+  setEditing,
+}) => {
   const { currentUserId } = useContext(AuthContext);
   const dispatch = useDispatch();
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [type, setType] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [topic, setTopic] = useState('');
+  const [question, setQuestion] = useState('' || updatedQuestion?.content);
+  const [answer, setAnswer] = useState('' || updatedQuestion?.answer);
+  const [type, setType] = useState('' || updatedQuestion?.type);
+  const [difficulty, setDifficulty] = useState(
+    '' || updatedQuestion?.difficulty,
+  );
+  const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
 
+  console.log(updatedQuestion);
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value as string);
   };
@@ -50,7 +62,7 @@ const QuestionForm: React.FC = () => {
     setError(false);
   };
   const handleAddQuestion = async () => {
-    if (!question || !answer || !type) {
+    if (!question || !answer || !type || !topic || !difficulty) {
       setError(true);
       return;
     }
@@ -83,6 +95,10 @@ const QuestionForm: React.FC = () => {
     }
 
     handleClearQuestion();
+  };
+
+  const handleEditQuestion = () => {
+    console.log('edit');
   };
 
   const questionOptions = [
@@ -144,12 +160,22 @@ const QuestionForm: React.FC = () => {
         </FormControl>
       </Box>
 
-      <Button variant='contained' type='submit' onClick={handleAddQuestion}>
+      <Button
+        variant='contained'
+        type='submit'
+        onClick={editing ? handleEditQuestion : handleAddQuestion}
+      >
         Save
       </Button>
-      <Button type='button' variant='text' onClick={handleClearQuestion}>
-        Clear
-      </Button>
+      {editing ? (
+        <Button type='button' variant='text' onClick={() => setEditing(false)}>
+          Cancel
+        </Button>
+      ) : (
+        <Button type='button' variant='text' onClick={handleClearQuestion}>
+          Clear
+        </Button>
+      )}
     </Wrapper>
   );
 };

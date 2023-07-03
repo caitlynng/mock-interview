@@ -11,7 +11,7 @@ interface QuestionOptionsProps {
     option: string;
     selections: string[];
     handleChange: (event: SelectChangeEvent) => void;
-    value: string;
+    value: string | undefined;
     required: boolean;
   }[];
   error: boolean;
