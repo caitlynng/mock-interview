@@ -1,6 +1,12 @@
 import React, { useState, ChangeEvent, useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  Timestamp,
+  updateDoc,
+  doc,
+} from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -9,7 +15,7 @@ import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 import { AuthContext } from 'context/AuthContext';
-import { addQuestion } from 'redux/slices/interviewSlice';
+import { addQuestion, editQuestion } from 'redux/slices/interviewSlice';
 import { Wrapper } from './QuestionForm.styles';
 import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
@@ -35,7 +41,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
 
-  console.log(updatedQuestion);
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value as string);
   };
@@ -67,38 +72,62 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       return;
     }
 
-    const currentDate = new Date();
-    const milliseconds = currentDate.getTime();
-    const questionId = milliseconds.toString();
+    const questionCollectionRef = collection(
+      firestoreDB,
+      'questionList',
+      currentUserId,
+      'question',
+    );
 
-    const newQuestion: Question = {
-      id: questionId,
+    try {
+      const docRef = await addDoc(questionCollectionRef, {
+        createdAt: Timestamp.fromDate(new Date()),
+        content: question,
+        topic: topic,
+        difficulty: difficulty,
+        answer: answer,
+        type: type,
+      });
+
+      const newQuestion: Question = {
+        id: docRef.id, // Assign the document ID as the id property
+        content: question,
+        topic: topic,
+        difficulty: difficulty,
+        answer: answer,
+        type: type,
+      };
+
+      dispatch(addQuestion(newQuestion));
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const handleEditQuestion = async () => {
+    const updatedQuestionChange: Question = {
+      id: updatedQuestion?.id,
       content: question,
       topic: topic,
       difficulty: difficulty,
       answer: answer,
       type: type,
     };
-
-    dispatch(addQuestion(newQuestion));
-
+    dispatch(editQuestion(updatedQuestionChange));
     try {
-      await addDoc(
-        collection(firestoreDB, 'questionList', currentUserId, 'question'),
+      await updateDoc(
+        doc(
+          firestoreDB,
+          `questionList/${currentUserId}/question/${updatedQuestion?.id}`,
+        ),
         {
-          createdAt: Timestamp.fromDate(currentDate),
-          ...newQuestion,
+          ...updatedQuestionChange,
         },
       );
     } catch (error: any) {
       console.log(error.message);
     }
-
-    handleClearQuestion();
-  };
-
-  const handleEditQuestion = () => {
-    console.log('edit');
+    setEditing(false);
   };
 
   const questionOptions = [
@@ -155,6 +184,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             onChange={handleAnswerChange}
             InputLabelProps={{
               shrink: true,
+            }}
+            multiline
+            rows={4}
+            InputProps={{
+              style: {
+                minHeight: '100px',
+              },
             }}
           />
         </FormControl>

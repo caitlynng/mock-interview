@@ -13,7 +13,7 @@ import QuestionForm from './QuestionForm';
 
 interface QuestionProps {
   question: Question;
-  index: string;
+  index: string | undefined;
 }
 
 const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
