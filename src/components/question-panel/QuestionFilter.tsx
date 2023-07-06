@@ -30,7 +30,7 @@ const QuestionFilter: React.FC<QuestionOptionsProps> = ({ options, error }) => {
               <Select
                 labelId={`${item.option}-select-label`}
                 id={item.option}
-                value={item.value}
+                value={item.value || ''}
                 label={item.option}
                 onChange={item.handleChange}
                 error={item.required && error && !item.value}

@@ -32,8 +32,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 }) => {
   const { currentUserId } = useContext(AuthContext);
   const dispatch = useDispatch();
-  const [question, setQuestion] = useState('' || updatedQuestion?.content);
-  const [answer, setAnswer] = useState('' || updatedQuestion?.answer);
+  const [question, setQuestion] = useState<string>(
+    updatedQuestion?.content || '',
+  );
+  const [answer, setAnswer] = useState<string>(updatedQuestion?.answer || '');
   const [type, setType] = useState('' || updatedQuestion?.type);
   const [difficulty, setDifficulty] = useState(
     '' || updatedQuestion?.difficulty,
@@ -42,11 +44,19 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [error, setError] = useState(false);
 
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuestion(e.target.value as string);
+    const value = e.target.value;
+    const capitalizedQuest = value
+      ? value.charAt(0).toUpperCase() + value.slice(1)
+      : '';
+    setQuestion(capitalizedQuest);
   };
 
   const handleAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setAnswer(e.target.value as string);
+    const value = e.target.value;
+    const capitalizedAnswer = value
+      ? value.charAt(0).toUpperCase() + value.slice(1)
+      : '';
+    setAnswer(capitalizedAnswer);
   };
   const handleTypeChange = (e: SelectChangeEvent) => {
     setType(e.target.value as string);
@@ -90,7 +100,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       });
 
       const newQuestion: Question = {
-        id: docRef.id, // Assign the document ID as the id property
+        id: docRef.id,
         content: question,
         topic: topic,
         difficulty: difficulty,
@@ -143,14 +153,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       selections: fieldOptions.difficulty,
       handleChange: handleDifficultyChange,
       value: difficulty,
-      required: false,
+      required: true,
     },
     {
       option: 'Topic',
       selections: fieldOptions.topic,
       handleChange: handleTopicChange,
       value: topic,
-      required: false,
+      required: true,
     },
   ];
   return (
