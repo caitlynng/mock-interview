@@ -23,6 +23,10 @@ export const QuestionTheme: { [key: string]: any } = {
         '&.MuiListItemButton-root:hover': {
           backgroundColor: 'white',
         },
+        '&.MuiListItemButton-root': {
+          flexWrap: 'wrap-reverse',
+          gap: '0.5em',
+        },
       },
     },
   },

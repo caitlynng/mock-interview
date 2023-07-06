@@ -1,5 +1,7 @@
-import { Question } from 'types';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { firestoreDB } from 'firebaseConfig';
+import { useDispatch } from 'react-redux';
 import List from '@mui/material/List';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -8,8 +10,12 @@ import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
+
+import { Question } from 'types';
 import { Wrapper, QuestionTheme } from './Question.styles';
 import QuestionForm from './QuestionForm';
+import { AuthContext } from 'context/AuthContext';
+import { deleteQuestion } from 'redux/slices/interviewSlice';
 
 interface QuestionProps {
   question: Question;
@@ -17,6 +23,8 @@ interface QuestionProps {
 }
 
 const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
+  const { currentUserId } = useContext(AuthContext);
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
 
@@ -32,8 +40,15 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
     setEditing(true);
   };
 
-  const handleAnswerDeleteClick = () => {
-    console.log('delete');
+  const handleAnswerDeleteClick = async () => {
+    const docPath = `questionList/${currentUserId}/question/${question?.id}`;
+
+    try {
+      await deleteDoc(doc(firestoreDB, docPath));
+      dispatch(deleteQuestion(question.id));
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
   };
 
   const questionOnRender = () => {
@@ -42,7 +57,7 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
         sx={{
           width: '100%',
           bgcolor: 'background.paper',
-          boxShadow: `${open && 'rgba(0, 0, 0, 0.1) 0px 4px 12px'}`,
+          boxShadow: `${open && 'rgba(255, 0, 0, 0.1) 0px 4px 12px'}`,
         }}
         component='nav'
         aria-labelledby='nested-list-subheader'

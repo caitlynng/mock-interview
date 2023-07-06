@@ -89,25 +89,22 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       'question',
     );
 
+    const newQuestion: Question = {
+      id: '',
+      content: question,
+      topic: topic,
+      difficulty: difficulty,
+      answer: answer,
+      type: type,
+    };
+
     try {
       const docRef = await addDoc(questionCollectionRef, {
         createdAt: Timestamp.fromDate(new Date()),
-        content: question,
-        topic: topic,
-        difficulty: difficulty,
-        answer: answer,
-        type: type,
+        ...newQuestion,
       });
 
-      const newQuestion: Question = {
-        id: docRef.id,
-        content: question,
-        topic: topic,
-        difficulty: difficulty,
-        answer: answer,
-        type: type,
-      };
-
+      newQuestion.id = docRef.id;
       dispatch(addQuestion(newQuestion));
     } catch (error: any) {
       console.log(error.message);

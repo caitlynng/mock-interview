@@ -24,7 +24,7 @@ const interviewSlice = createSlice({
         state.questions[questionIndex] = { id, ...updatedQuestion };
       }
     },
-    deleteQuestion: (state, action: PayloadAction<string>) => {
+    deleteQuestion: (state, action: PayloadAction<string | undefined>) => {
       const questionIndex = state.questions.findIndex(
         (question) => question.id === action.payload,
       );
