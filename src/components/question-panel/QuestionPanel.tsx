@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Wrapper } from './QuestionList.styles';
 import QuestionForm from './QuestionForm';
 import QuestionList from './QuestionList';
 
 const QuestionPanel: React.FC = () => {
-  const [addingQuestion, setAddingQuestion] = useState(false);
+  const [isQuestionPanelOpen, setIsQuestionPanelOpen] = useState(false);
 
   return (
     <Wrapper>
-      <button onClick={() => setAddingQuestion(!addingQuestion)}>
-        Add question
-      </button>
-      {addingQuestion && <QuestionForm />}
+      <IconButton onClick={() => setIsQuestionPanelOpen(!isQuestionPanelOpen)}>
+        Add Question
+        {isQuestionPanelOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      </IconButton>
+      {isQuestionPanelOpen && (
+        <QuestionForm
+          isFormOpen={isQuestionPanelOpen}
+          setIsFormOpen={setIsQuestionPanelOpen}
+        />
+      )}
       <QuestionList />
     </Wrapper>
   );

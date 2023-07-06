@@ -21,14 +21,14 @@ import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 
 interface QuestionFormProps {
-  updatedQuestion: Question | undefined;
-  editing: boolean;
-  setEditing: (editing: boolean) => void;
+  updatedQuestion?: Question | undefined;
+  isFormOpen?: boolean;
+  setIsFormOpen?: (isFormOpen: boolean) => void;
 }
 const QuestionForm: React.FC<QuestionFormProps> = ({
   updatedQuestion,
-  editing,
-  setEditing,
+  isFormOpen,
+  setIsFormOpen,
 }) => {
   const { currentUserId } = useContext(AuthContext);
   const dispatch = useDispatch();
@@ -89,26 +89,29 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       'question',
     );
 
-    const newQuestion: Question = {
-      id: '',
-      content: question,
-      topic: topic,
-      difficulty: difficulty,
-      answer: answer,
-      type: type,
-    };
-
     try {
       const docRef = await addDoc(questionCollectionRef, {
         createdAt: Timestamp.fromDate(new Date()),
-        ...newQuestion,
+        content: question,
+        topic: topic,
+        difficulty: difficulty,
+        answer: answer,
+        type: type,
       });
 
-      newQuestion.id = docRef.id;
+      const newQuestion: Question = {
+        id: docRef.id,
+        content: question,
+        topic: topic,
+        difficulty: difficulty,
+        answer: answer,
+        type: type,
+      };
       dispatch(addQuestion(newQuestion));
     } catch (error: any) {
       console.log(error.message);
     }
+    setIsFormOpen?.(false);
   };
 
   const handleEditQuestion = async () => {
@@ -134,7 +137,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     } catch (error: any) {
       console.log(error.message);
     }
-    setEditing(false);
+    setIsFormOpen?.(false);
   };
 
   const questionOptions = [
@@ -206,12 +209,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       <Button
         variant='contained'
         type='submit'
-        onClick={editing ? handleEditQuestion : handleAddQuestion}
+        onClick={updatedQuestion ? handleEditQuestion : handleAddQuestion}
       >
         Save
       </Button>
-      {editing ? (
-        <Button type='button' variant='text' onClick={() => setEditing(false)}>
+      {isFormOpen ? (
+        <Button
+          type='button'
+          variant='text'
+          onClick={() => setIsFormOpen?.(false)}
+        >
           Cancel
         </Button>
       ) : (

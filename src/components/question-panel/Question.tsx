@@ -95,8 +95,8 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
     return (
       <QuestionForm
         updatedQuestion={question}
-        editing={editing}
-        setEditing={setEditing}
+        isFormOpen={editing}
+        setIsFormOpen={setEditing}
       />
     );
   };
