@@ -13,7 +13,7 @@ const interviewSlice = createSlice({
   initialState,
   reducers: {
     addQuestion: (state, action: PayloadAction<Question>) => {
-      state.questions.push(action.payload);
+      state.questions.unshift(action.payload);
     },
     editQuestion: (state, action: PayloadAction<Question>) => {
       const { id, ...updatedQuestion } = action.payload;
