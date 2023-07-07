@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  Wrapper,
-  QuestionTheme,
-  AddQuestionWrapper,
-} from './QuestionPanel.styles';
+import { Wrapper, QuestionTheme } from './QuestionPanel.styles';
 import { materialDefaultTheme } from 'App.styles';
-import QuestionForm from './QuestionForm';
 import QuestionList from './QuestionList';
-import { OverlayWrapper } from 'App.styles';
 
 const QuestionPanel: React.FC = () => {
-  const [isQuestionPanelOpen, setIsQuestionPanelOpen] = useState(false);
   const questionTheme = createTheme({
     components: { ...materialDefaultTheme, ...QuestionTheme },
   });
@@ -22,28 +12,6 @@ const QuestionPanel: React.FC = () => {
   return (
     <Wrapper>
       <ThemeProvider theme={questionTheme}>
-        <AddQuestionWrapper>
-          <IconButton
-            disableRipple
-            onClick={() => setIsQuestionPanelOpen(!isQuestionPanelOpen)}
-          >
-            Add Question
-            {isQuestionPanelOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-        </AddQuestionWrapper>
-        {isQuestionPanelOpen && (
-          <OverlayWrapper>
-            <div className='panel-overlay'>
-              <div className='form-container'>
-                <h3>Add Question</h3>
-                <QuestionForm
-                  isFormOpen={isQuestionPanelOpen}
-                  setIsFormOpen={setIsQuestionPanelOpen}
-                />
-              </div>
-            </div>
-          </OverlayWrapper>
-        )}
         <QuestionList />
       </ThemeProvider>
     </Wrapper>
