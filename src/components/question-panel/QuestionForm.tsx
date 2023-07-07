@@ -171,7 +171,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         <FormControl fullWidth>
           <TextField
             error={error && !question}
-            required
             id='question'
             label='Question'
             value={question}
@@ -187,7 +186,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         <FormControl fullWidth>
           <TextField
             error={error && !answer}
-            required
             id='answer'
             label='Answer'
             value={answer}

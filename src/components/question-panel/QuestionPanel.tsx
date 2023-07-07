@@ -33,6 +33,7 @@ const QuestionPanel: React.FC = () => {
         {isQuestionPanelOpen && (
           <div className='question-panel-overlay'>
             <div className='question-form-container'>
+              <h3>Add Question</h3>
               <QuestionForm
                 isFormOpen={isQuestionPanelOpen}
                 setIsFormOpen={setIsQuestionPanelOpen}

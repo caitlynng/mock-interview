@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.2);
-    z-index: 9999;
+    z-index: 1000;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -25,6 +25,9 @@ export const Wrapper = styled.div`
     padding: 20px;
     border-radius: 8px;
     animation: slide-in 0.3s ease;
+    & > h3 {
+      margin-top: calc(100vh / 7);
+    }
   }
 
   @keyframes slide-in {
@@ -89,6 +92,13 @@ export const QuestionTheme: { [key: string]: any } = {
     styleOverrides: {
       root: {
         cursor: 'pointer',
+      },
+    },
+  },
+  MuiModal: {
+    styleOverrides: {
+      root: {
+        zIndex: 1001,
       },
     },
   },
