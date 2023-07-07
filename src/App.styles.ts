@@ -3,15 +3,12 @@ import styled from 'styled-components';
 export const AppWrapper = styled.div`
   height: 100vh;
   width: 100vw;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  letter-spacing: 0.5px;
-  align-items: center;
 `;
 
 export const primaryColor = '#4d4dff';
 export const primaryColorHover = '#6666ff';
+export const boxShadow =
+  'rgba(77, 77, 255, 0.12) 0px 1px 3px, rgba(77, 77, 255, 0.24) 0px 1px 3px';
 
 export const materialDefaultTheme: { [key: string]: object } = {
   MuiTextField: {

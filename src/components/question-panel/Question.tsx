@@ -3,7 +3,6 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
 import { useDispatch } from 'react-redux';
 import List from '@mui/material/List';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
@@ -12,7 +11,7 @@ import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 
 import { Question } from 'types';
-import { Wrapper, QuestionTheme } from './Question.styles';
+import { Wrapper } from './Question.styles';
 import QuestionForm from './QuestionForm';
 import { AuthContext } from 'context/AuthContext';
 import { deleteQuestion } from 'redux/slices/interviewSlice';
@@ -27,10 +26,6 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
-
-  const questionTheme = createTheme({
-    components: { ...QuestionTheme },
-  });
 
   const handleQuestionClick = () => {
     setOpen(!open);
@@ -102,9 +97,7 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
   };
   return (
     <Wrapper key={index}>
-      <ThemeProvider theme={questionTheme}>
-        {editing ? questionOnEdit() : questionOnRender()}
-      </ThemeProvider>
+      {editing ? questionOnEdit() : questionOnRender()}
     </Wrapper>
   );
 };
