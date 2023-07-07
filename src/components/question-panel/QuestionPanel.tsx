@@ -11,6 +11,7 @@ import {
 import { materialDefaultTheme } from 'App.styles';
 import QuestionForm from './QuestionForm';
 import QuestionList from './QuestionList';
+import { OverlayWrapper } from 'App.styles';
 
 const QuestionPanel: React.FC = () => {
   const [isQuestionPanelOpen, setIsQuestionPanelOpen] = useState(false);
@@ -31,15 +32,17 @@ const QuestionPanel: React.FC = () => {
           </IconButton>
         </AddQuestionWrapper>
         {isQuestionPanelOpen && (
-          <div className='question-panel-overlay'>
-            <div className='question-form-container'>
-              <h3>Add Question</h3>
-              <QuestionForm
-                isFormOpen={isQuestionPanelOpen}
-                setIsFormOpen={setIsQuestionPanelOpen}
-              />
+          <OverlayWrapper>
+            <div className='panel-overlay'>
+              <div className='form-container'>
+                <h3>Add Question</h3>
+                <QuestionForm
+                  isFormOpen={isQuestionPanelOpen}
+                  setIsFormOpen={setIsQuestionPanelOpen}
+                />
+              </div>
             </div>
-          </div>
+          </OverlayWrapper>
         )}
         <QuestionList />
       </ThemeProvider>
