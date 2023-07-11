@@ -1,0 +1,10 @@
+{
+  "name": "interview-prep-pro",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "cd server && npm start"
+  },
+  "author": "caitlynng",
+  "license": "ISC"
+}
