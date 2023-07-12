@@ -20,33 +20,6 @@ export type LoginFormData = {
   loading: boolean;
 };
 
-const token: string = 'token';
-
-const axiosFetch = axios.create({
-  baseURL: '/api/v1',
-});
-//axios interceptor to control error response
-axiosFetch.interceptors.request.use(
-  (config) => {
-    config.headers.common['Authorization'] = `Bearer ${token}`;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
-axiosFetch.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response.status === 401) {
-      console.log(error.response);
-    }
-    return Promise.reject(error);
-  },
-);
-
 export const useRegistration = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -95,6 +68,7 @@ export const useRegistration = () => {
       const { user } = data;
 
       dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
+      sessionStorage.setItem('uid', user.uid);
       navigate(fromPage, { replace: true });
     } catch (error: any) {
       setFormData((prevFormData) => ({
@@ -145,6 +119,7 @@ export const useLogin = () => {
       const { data } = await axios.post(`/api/v1/auth/login`, formData);
       const { user } = data;
       dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
+      sessionStorage.setItem('uid', user.uid);
       navigate(fromPage, { replace: true });
     } catch (error: any) {
       setFormData((prevFormData) => ({

@@ -1,16 +1,12 @@
 import { Question } from 'types';
+import axiosFetch from 'hooks/axiosFetch';
 
 const fetchAllQuestions = async (
   currentUserId: string,
 ): Promise<Question[]> => {
   try {
-    const response = await fetch('/api/v1/user/all-questions');
-    if (!response.ok) {
-      throw new Error('Failed to fetch questions');
-    }
-
-    const data = await response.json();
-    console.log(data);
+    const response = await axiosFetch.get('/user/all-questions');
+    const data: Question[] = response.data;
     return data;
   } catch (error) {
     console.error(error);

@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import authenticateUser from "./middleware/auth.js";
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use(express.static(path.resolve(__dirname, "./client/build")));
 app.use(express.json({ limit: "16mb" }));
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/user", userRouter);
+app.use("/api/v1/user", authenticateUser, userRouter);
 
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
