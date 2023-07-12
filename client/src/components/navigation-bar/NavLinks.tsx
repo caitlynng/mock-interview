@@ -1,17 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { Button } from '@mui/material';
-import { signOut } from 'firebase/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
-import { auth } from 'firebaseConfig';
+import { useDispatch } from 'react-redux';
 
 import { AuthContext } from 'context/AuthContext';
 import { OverlayWrapper } from 'App.styles';
 import QuestionForm from 'components/question-panel/QuestionForm';
+import { setUser } from 'redux/slices/usersSlice';
 
 const NavLinks: React.FC = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUserId } = useContext(AuthContext);
   const { pathname } = useLocation();
+  const dispatch = useDispatch();
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
 
@@ -26,11 +27,12 @@ const NavLinks: React.FC = () => {
     setIsAddingQuestion(false);
   };
   const handleLogout = async () => {
-    await signOut(auth);
+    console.log('logout');
+    dispatch(setUser({ email: '', name: '', uid: '' }));
     navigate('/login');
   };
 
-  if (currentUser) {
+  if (currentUserId) {
     return (
       <Stack direction='row' spacing={2}>
         <Button onClick={openGenerateQuestionPanel}>

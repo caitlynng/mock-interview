@@ -7,9 +7,9 @@ interface Props {
 }
 
 const PublicOnlyRoute: React.FC<Props> = ({ children }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUserId } = useContext(AuthContext);
 
-  if (currentUser) {
+  if (currentUserId) {
     return <Navigate to='/' />;
   }
 

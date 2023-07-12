@@ -1,12 +1,8 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from 'firebase/auth';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { useState, FormEvent } from 'react';
-import { auth, firestoreDB } from 'firebaseConfig';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { setUser } from 'redux/slices/usersSlice';
 
 export type RegistrationFormData = {
   name: string;
@@ -24,29 +20,35 @@ export type LoginFormData = {
   loading: boolean;
 };
 
-const firebaseErrors: { [firebaseError: string]: string } = {
-  'Firebase: Error (auth/invalid-email).': 'Please enter a valid email',
-  'Firebase: Password should be at least 6 characters (auth/weak-password).':
-    'Password must be at least 6 characters',
-  'Firebase: Error (auth/wrong-password).':
-    'Invalid email or password. Please try again.',
-  'Firebase: Error (auth/user-not-found).':
-    'Invalid email or password. Please try again.',
-  'Firebase: Error (auth/email-already-in-use).': 'Email is already in use',
-};
+const token: string = 'token';
 
-const getErrorMessage = (error: any) => {
-  console.log(error);
-  const message = error.message as string;
-  const messageToShow =
-    message in firebaseErrors
-      ? firebaseErrors[message]
-      : 'There was an error. Please try again later.';
-
-  return messageToShow;
-};
+const axiosFetch = axios.create({
+  baseURL: '/api/v1',
+});
+//axios interceptor to control error response
+axiosFetch.interceptors.request.use(
+  (config) => {
+    config.headers.common['Authorization'] = `Bearer ${token}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+axiosFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      console.log(error.response);
+    }
+    return Promise.reject(error);
+  },
+);
 
 export const useRegistration = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -64,11 +66,7 @@ export const useRegistration = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const { name, password, isCheck } = formData;
-
-    let { email } = formData;
-
-    email = email.toLowerCase();
+    const { name, password, isCheck, email } = formData;
 
     if (!name || !email || !password) {
       setFormData((prevFormData) => ({
@@ -93,25 +91,15 @@ export const useRegistration = () => {
     }));
 
     try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
+      const { data } = await axios.post(`/api/v1/auth/register`, formData);
+      const { user } = data;
 
-      await setDoc(doc(firestoreDB, 'users', result.user.uid), {
-        uid: result.user.uid,
-        name,
-        email,
-        createdAt: Timestamp.fromDate(new Date()),
-      });
-
-      await updateProfile(result.user, { displayName: name });
+      dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
       navigate(fromPage, { replace: true });
-    } catch (firebaseError: any) {
+    } catch (error: any) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        error: getErrorMessage(firebaseError),
+        error: error,
         loading: false,
       }));
     }
@@ -121,6 +109,7 @@ export const useRegistration = () => {
 };
 
 export const useLogin = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -153,13 +142,14 @@ export const useLogin = () => {
     }));
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-
+      const { data } = await axios.post(`/api/v1/auth/login`, formData);
+      const { user } = data;
+      dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
       navigate(fromPage, { replace: true });
-    } catch (firebaseError: any) {
+    } catch (error: any) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        error: getErrorMessage(firebaseError),
+        error: error,
         loading: false,
       }));
     }

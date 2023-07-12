@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import users from './slices/usersSlice';
+import user from './slices/usersSlice';
 import interview from './slices/interviewSlice';
 
 const store = configureStore({
   reducer: {
-    users,
+    user,
     interview,
   },
 });

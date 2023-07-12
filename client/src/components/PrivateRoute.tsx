@@ -7,10 +7,10 @@ interface Props {
 }
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUserId } = useContext(AuthContext);
   const location = useLocation();
 
-  if (currentUser) {
+  if (currentUserId) {
     return children;
   }
 
