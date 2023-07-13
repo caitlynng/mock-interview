@@ -28,7 +28,7 @@ const NavLinks: React.FC = () => {
   };
   const handleLogout = async () => {
     dispatch(setUser({ email: '', name: '', uid: '' }));
-    sessionStorage.removeItem('uid');
+    localStorage.removeItem('uid');
     navigate('/login');
   };
 

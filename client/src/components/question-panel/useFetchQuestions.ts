@@ -5,7 +5,8 @@ const fetchAllQuestions = async (
   currentUserId: string,
 ): Promise<Question[]> => {
   try {
-    const response = await axiosFetch.get('/user/all-questions');
+    const axiosInstance = await axiosFetch();
+    const response = await axiosInstance.get('/user/all-questions');
     const data: Question[] = response.data;
     return data;
   } catch (error) {

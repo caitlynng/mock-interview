@@ -68,7 +68,7 @@ export const useRegistration = () => {
       const { user } = data;
 
       dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
-      sessionStorage.setItem('uid', user.uid);
+      localStorage.setItem('auth', JSON.stringify(user));
       navigate(fromPage, { replace: true });
     } catch (error: any) {
       setFormData((prevFormData) => ({
@@ -119,7 +119,7 @@ export const useLogin = () => {
       const { data } = await axios.post(`/api/v1/auth/login`, formData);
       const { user } = data;
       dispatch(setUser({ name: user.name, email: user.email, uid: user.uid }));
-      sessionStorage.setItem('uid', user.uid);
+      localStorage.setItem('auth', JSON.stringify(user));
       navigate(fromPage, { replace: true });
     } catch (error: any) {
       setFormData((prevFormData) => ({
