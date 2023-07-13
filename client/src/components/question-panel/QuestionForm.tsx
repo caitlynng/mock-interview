@@ -8,6 +8,8 @@ import {
   doc,
 } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
+import axiosFetch from 'hooks/axiosFetch';
+
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
@@ -81,42 +83,29 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       setError(true);
       return;
     }
-
-    const questionCollectionRef = collection(
-      firestoreDB,
-      'questionList',
-      currentUserId,
-      'question',
-    );
+    const newQuestion: Question = {
+      content: question,
+      topic: topic,
+      difficulty: difficulty,
+      answer: answer,
+      type: type,
+    };
 
     try {
-      const docRef = await addDoc(questionCollectionRef, {
-        createdAt: Timestamp.fromDate(new Date()),
-        content: question,
-        topic: topic,
-        difficulty: difficulty,
-        answer: answer,
-        type: type,
+      const { data, status } = await axiosFetch.post('/user/add-question', {
+        newQuestion,
       });
-
-      const newQuestion: Question = {
-        id: docRef.id,
-        content: question,
-        topic: topic,
-        difficulty: difficulty,
-        answer: answer,
-        type: type,
-      };
-      dispatch(addQuestion(newQuestion));
+      if (status === 200) {
+        dispatch(addQuestion(data.addedQuestionWithID));
+      }
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error.response.data.msg);
     }
     setIsFormOpen?.(false);
   };
 
   const handleEditQuestion = async () => {
     const updatedQuestionChange: Question = {
-      id: updatedQuestion?.id,
       content: question,
       topic: topic,
       difficulty: difficulty,
@@ -125,17 +114,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     };
     dispatch(editQuestion(updatedQuestionChange));
     try {
-      await updateDoc(
-        doc(
-          firestoreDB,
-          `questionList/${currentUserId}/question/${updatedQuestion?.id}`,
-        ),
-        {
-          ...updatedQuestionChange,
-        },
-      );
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error.response.data.msg);
     }
     setIsFormOpen?.(false);
   };

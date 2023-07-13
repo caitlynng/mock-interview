@@ -1,7 +1,8 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
 const token = sessionStorage.getItem('uid');
-const baseURL = import.meta.env.VITE_BASE_API
+console.log(token);
+const baseURL = import.meta.env.VITE_BASE_API;
 const axiosFetch = axios.create({
   baseURL,
   headers: {

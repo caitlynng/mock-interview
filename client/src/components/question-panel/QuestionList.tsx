@@ -78,6 +78,10 @@ const QuestionList: React.FC<QuestionListProps> = ({
     }
     return true;
   });
+
+  if (!questions.length) {
+    return <div>Loading</div>;
+  }
   return (
     <div>
       <QuestionFilter options={questionOptions} error={false} />
@@ -85,8 +89,8 @@ const QuestionList: React.FC<QuestionListProps> = ({
       {filteredQuestions.map((question) => (
         <QuestionComponent
           question={question}
-          key={question.id}
-          index={question.id}
+          key={question._id}
+          index={question._id}
         />
       ))}
     </div>

@@ -124,7 +124,7 @@ export const useLogin = () => {
     } catch (error: any) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        error: error,
+        error: error.response.data.msg,
         loading: false,
       }));
     }

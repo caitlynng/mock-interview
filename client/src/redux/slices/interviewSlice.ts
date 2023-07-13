@@ -16,17 +16,17 @@ const interviewSlice = createSlice({
       state.questions.unshift(action.payload);
     },
     editQuestion: (state, action: PayloadAction<Question>) => {
-      const { id, ...updatedQuestion } = action.payload;
+      const { _id, ...updatedQuestion } = action.payload;
       const questionIndex = state.questions.findIndex(
-        (question) => question.id === id,
+        (question) => question._id === _id,
       );
       if (questionIndex !== -1) {
-        state.questions[questionIndex] = { id, ...updatedQuestion };
+        state.questions[questionIndex] = { _id, ...updatedQuestion };
       }
     },
     deleteQuestion: (state, action: PayloadAction<string | undefined>) => {
       const questionIndex = state.questions.findIndex(
-        (question) => question.id === action.payload,
+        (question) => question._id === action.payload,
       );
       if (questionIndex !== -1) {
         state.questions.splice(questionIndex, 1);

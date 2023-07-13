@@ -52,19 +52,10 @@ const login = async (req, res) => {
   }
 
   let user = await User.findOne({ email }).select("+password"); //override 'select: false' defined on password prop UserSchema
-  // console.log(user);
-  if (!user) {
-    res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "We couldn’t find an account matching the email and password you entered. Please check your email and password and try again.",
-    });
-    throw new UnAuthenticatedError("Invalid Credentials");
-  }
-  //comparePassword method is defined on UserSchema
   const isPasswordCorrect = await user.comparePassword(password);
-
-  if (!isPasswordCorrect) {
+  if (!user || !isPasswordCorrect) {
     res.status(StatusCodes.BAD_REQUEST).json({
-      msg: "We couldn’t find an account matching the email and password you entered. Please check your email and password and try again.",
+      msg: "Invalid email or password.",
     });
     throw new UnAuthenticatedError("Invalid Credentials");
   }

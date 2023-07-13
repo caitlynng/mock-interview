@@ -1,5 +1,5 @@
 export interface Question {
-  id: string | undefined;
+  _id?: string | undefined;
   content: string | undefined;
   topic: string | undefined;
   difficulty: string | undefined;
