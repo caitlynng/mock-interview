@@ -92,7 +92,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     };
 
     try {
-      const { data, status } = await axiosFetch.post('/user/add-question', {
+      const axiosInstance = await axiosFetch();
+      const { data, status } = await axiosInstance.post('/user/add-question', {
         newQuestion,
       });
       if (status === 200) {
@@ -105,15 +106,24 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   };
 
   const handleEditQuestion = async () => {
-    const updatedQuestionChange: Question = {
+    const editedQuestion: Question = {
+      _id: updatedQuestion?._id,
       content: question,
       topic: topic,
       difficulty: difficulty,
       answer: answer,
       type: type,
     };
-    dispatch(editQuestion(updatedQuestionChange));
+
     try {
+      const axiosInstance = await axiosFetch();
+      const { data, status } = await axiosInstance.post('/user/edit-question', {
+        editedQuestion,
+      });
+      console.log(data);
+      if (status === 200) {
+        dispatch(editQuestion(data.update));
+      }
     } catch (error: any) {
       console.log(error.response.data.msg);
     }

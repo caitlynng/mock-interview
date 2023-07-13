@@ -8,7 +8,7 @@ export interface Question {
 }
 
 export const fieldOptions = {
-  type: ['Behavioral', 'Technical'],
+  type: ['Background', 'Situational', 'Technical'],
   difficulty: ['Easy', 'Medium', 'Hard'],
   topic: ['JavaScript', 'TypeScript', 'MongoDB', 'Data Structure'],
 };

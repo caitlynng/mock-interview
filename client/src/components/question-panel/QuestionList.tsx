@@ -68,7 +68,7 @@ const QuestionList: React.FC<QuestionListProps> = ({
     fetchAllQuestions(currentUserId);
   }, [fetchAllQuestions, currentUserId]);
 
-  const filteredQuestions = questions.filter((question) => {
+  const filteredQuestions = questions?.filter((question) => {
     if (
       (type && question.type !== type) ||
       (difficulty && question.difficulty !== difficulty) ||
@@ -79,9 +79,6 @@ const QuestionList: React.FC<QuestionListProps> = ({
     return true;
   });
 
-  if (!questions.length) {
-    return <div>Loading</div>;
-  }
   return (
     <div>
       <QuestionFilter options={questionOptions} error={false} />

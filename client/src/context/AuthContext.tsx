@@ -22,9 +22,18 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const { uid, name, email } = useSelector((state: RootState) => state.user);
   useEffect(() => {
-    setCurrentUserName(name);
-    setCurrentUserEmail(email);
-    setCurrentUserId(uid);
+    const storedAuthData = localStorage.getItem('auth');
+    if (storedAuthData) {
+      const { name, email, uid } = JSON.parse(storedAuthData);
+      setCurrentUserName(name);
+      setCurrentUserEmail(email);
+      setCurrentUserId(uid);
+    } else {
+      setCurrentUserName(name);
+      setCurrentUserEmail(email);
+      setCurrentUserId(uid);
+    }
+
     setLoadingApp(false);
   }, [uid, name, email]);
 

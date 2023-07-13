@@ -5,6 +5,7 @@ import { UnAuthenticatedError } from "../errors/index.js";
 UnAuthenticatedError;
 const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(authHeader);
   try {
     if (authHeader || authHeader.startsWith("Bearer")) {
       const token = authHeader.split(" ")[1];
