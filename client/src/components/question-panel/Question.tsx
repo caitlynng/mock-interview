@@ -15,6 +15,7 @@ import { Wrapper } from './Question.styles';
 import QuestionForm from './QuestionForm';
 import { AuthContext } from 'context/AuthContext';
 import { deleteQuestion } from 'redux/slices/interviewSlice';
+import axiosFetch from 'hooks/axiosFetch';
 
 interface QuestionProps {
   question: Question;
@@ -22,7 +23,6 @@ interface QuestionProps {
 }
 
 const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
-  const { currentUserId } = useContext(AuthContext);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -31,16 +31,19 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
     setOpen(!open);
   };
 
-  const handleAnswerEditClick = () => {
+  const handleEdit = () => {
     setEditing(true);
   };
 
-  const handleAnswerDeleteClick = async () => {
-    const docPath = `questionList/${currentUserId}/question/${question?.id}`;
-
+  const handleDelete = async () => {
     try {
-      await deleteDoc(doc(firestoreDB, docPath));
-      dispatch(deleteQuestion(question.id));
+      const axiosInstance = await axiosFetch();
+      const update = await axiosInstance.post('user/delete-question', {
+        questionID: question._id,
+      });
+      if (update.status === 200) {
+        dispatch(deleteQuestion(question._id));
+      }
     } catch (error) {
       console.error('Error deleting document:', error);
     }
@@ -76,8 +79,8 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
             <ListItemButton sx={{ pl: 4 }}>
               <>
                 <div>{question.answer}</div>
-                <Button onClick={handleAnswerEditClick}>Edit</Button>
-                <Button onClick={handleAnswerDeleteClick}>Delete</Button>
+                <Button onClick={handleEdit}>Edit</Button>
+                <Button onClick={handleDelete}>Delete</Button>
               </>
             </ListItemButton>
           </List>

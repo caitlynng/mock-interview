@@ -3,7 +3,6 @@ import { StatusCodes } from "http-status-codes";
 import Question from "../models/Question.js";
 
 export const getAllQuestions = async (req, res) => {
-  console.log(req.user.userId);
   const { userId } = req.user;
   const data = await Question.find({
     createdBy: userId,
@@ -28,6 +27,12 @@ export const addQuestion = async (req, res) => {
 export const editQuestion = async (req, res) => {
   const { _id, ...rest } = req.body.editedQuestion;
   const update = await Question.findByIdAndUpdate(_id, rest, { new: true });
+
+  res.status(StatusCodes.OK).json({ update });
+};
+export const deleteQuestion = async (req, res) => {
+  const { questionID } = req.body;
+  const update = await Question.findOneAndDelete(questionID);
 
   res.status(StatusCodes.OK).json({ update });
 };
