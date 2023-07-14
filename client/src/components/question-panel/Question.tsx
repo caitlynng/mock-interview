@@ -1,6 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { deleteDoc, doc } from 'firebase/firestore';
-import { firestoreDB } from 'firebaseConfig';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -13,7 +11,6 @@ import Button from '@mui/material/Button';
 import { Question } from 'types';
 import { Wrapper } from './Question.styles';
 import QuestionForm from './QuestionForm';
-import { AuthContext } from 'context/AuthContext';
 import { deleteQuestion } from 'redux/slices/interviewSlice';
 import axiosFetch from 'hooks/axiosFetch';
 

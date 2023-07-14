@@ -1,26 +1,14 @@
-import React, { useState, ChangeEvent, useContext } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  addDoc,
-  collection,
-  Timestamp,
-  updateDoc,
-  doc,
-} from 'firebase/firestore';
-import { firestoreDB } from 'firebaseConfig';
-import axiosFetch from 'hooks/axiosFetch';
-
+import React, { useState, ChangeEvent } from 'react';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { AuthContext } from 'context/AuthContext';
-import { addQuestion, editQuestion } from 'redux/slices/interviewSlice';
 import { Wrapper } from './QuestionForm.styles';
 import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
+import { useUpdateQuestion } from './useUpdateQuestion';
 
 interface QuestionFormProps {
   updatedQuestion?: Question | undefined;
@@ -32,8 +20,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   isFormOpen,
   setIsFormOpen,
 }) => {
-  const { currentUserId } = useContext(AuthContext);
-  const dispatch = useDispatch();
   const [question, setQuestion] = useState<string>(
     updatedQuestion?.content || '',
   );
@@ -45,6 +31,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
 
+  const { handleUpdateQuestion } = useUpdateQuestion(
+    question,
+    answer,
+    type || '',
+    topic || '',
+    difficulty || '',
+    setError,
+    setIsFormOpen || (() => {}),
+    updatedQuestion,
+  );
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const capitalizedQuest = value
@@ -77,57 +73,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setType('');
     setDifficulty('');
     setError(false);
-  };
-  const handleAddQuestion = async () => {
-    if (!question || !answer || !type || !topic || !difficulty) {
-      setError(true);
-      return;
-    }
-    const newQuestion: Question = {
-      content: question,
-      topic: topic,
-      difficulty: difficulty,
-      answer: answer,
-      type: type,
-    };
-
-    try {
-      const axiosInstance = await axiosFetch();
-      const { data, status } = await axiosInstance.post('/user/add-question', {
-        newQuestion,
-      });
-      if (status === 200) {
-        dispatch(addQuestion(data.addedQuestionWithID));
-      }
-    } catch (error: any) {
-      console.log(error.response.data.msg);
-    }
-    setIsFormOpen?.(false);
-  };
-
-  const handleEditQuestion = async () => {
-    const editedQuestion: Question = {
-      _id: updatedQuestion?._id,
-      content: question,
-      topic: topic,
-      difficulty: difficulty,
-      answer: answer,
-      type: type,
-    };
-
-    try {
-      const axiosInstance = await axiosFetch();
-      const { data, status } = await axiosInstance.post('/user/edit-question', {
-        editedQuestion,
-      });
-      console.log(data);
-      if (status === 200) {
-        dispatch(editQuestion(data.update));
-      }
-    } catch (error: any) {
-      console.log(error.response.data.msg);
-    }
-    setIsFormOpen?.(false);
   };
 
   const questionOptions = [
@@ -194,11 +139,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         </FormControl>
       </Box>
 
-      <Button
-        variant='contained'
-        type='submit'
-        onClick={updatedQuestion ? handleEditQuestion : handleAddQuestion}
-      >
+      <Button variant='contained' type='submit' onClick={handleUpdateQuestion}>
         Save
       </Button>
       {isFormOpen ? (
