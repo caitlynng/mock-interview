@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -6,7 +6,13 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Popover from '@mui/material/Popover';
 import Button from '@mui/material/Button';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
 
 import { Question } from 'types';
 import { Wrapper } from './Question.styles';
@@ -23,6 +29,18 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null,
+  );
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const openEditPanel = Boolean(anchorEl);
+  const id = openEditPanel ? 'simple-popover' : undefined;
 
   const handleQuestionClick = () => {
     setOpen(!open);
@@ -45,6 +63,11 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
       console.error('Error deleting document:', error);
     }
   };
+  useEffect(() => {
+    if (!editing) {
+      setAnchorEl(null);
+    }
+  }, [editing]);
 
   const questionOnRender = () => {
     return (
@@ -61,25 +84,75 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
           onClick={handleQuestionClick}
           sx={{
             display: 'flex',
+            flexDirection: 'column',
             flexWrap: 'wrap',
+            alignItems: 'start',
+            position: 'relative',
           }}
         >
-          <ListItemText primary={question.content} />
-          <Stack direction='row' spacing={1} sx={{ marginLeft: 'auto' }}>
+          <Stack direction='row' spacing={1}>
             <Chip label={question.type} />
             <Chip label={question.difficulty} />
             <Chip label={question.topic} />
           </Stack>
+          <ListItemText
+            primary={question.content}
+            sx={{
+              paddingLeft: '1em',
+            }}
+          />
         </ListItemButton>
         <Collapse in={open} timeout='auto' unmountOnExit>
           <List component='div' disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <>
-                <div>{question.answer}</div>
-                <Button onClick={handleEdit}>Edit</Button>
-                <Button onClick={handleDelete}>Delete</Button>
-              </>
-            </ListItemButton>
+            <div
+              style={{
+                padding: '1em 2em',
+                position: 'relative',
+              }}
+            >
+              <div>{question.answer}</div>
+              <Button
+                aria-describedby={id}
+                onClick={handleClick}
+                style={{
+                  position: 'absolute',
+                  top: '0.5em',
+                  right: 0,
+                  zIndex: 1,
+                }}
+              >
+                <MoreVertIcon fontSize='medium' />
+              </Button>
+              <Popover
+                id={id}
+                open={openEditPanel}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+              >
+                <List>
+                  <ListItem disablePadding onClick={handleEdit}>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <EditIcon />
+                      </ListItemIcon>
+                      <ListItemText primary='Edit' />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding onClick={handleDelete}>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <DeleteIcon />
+                      </ListItemIcon>
+                      <ListItemText primary='Delete' />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Popover>
+            </div>
           </List>
         </Collapse>
       </List>

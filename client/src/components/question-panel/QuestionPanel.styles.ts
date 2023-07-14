@@ -4,6 +4,8 @@ import { primaryColor } from 'App.styles';
 export const Wrapper = styled.div`
   margin: 0 auto;
   padding: 1em;
+  background: #edf0f5;
+  height: 90%;
 `;
 export const AddQuestionWrapper = styled.div`
   display: flex;
@@ -32,14 +34,23 @@ export const QuestionTheme: { [key: string]: any } = {
   MuiButtonBase: {
     styleOverrides: {
       root: {
-        minHeight: '5em',
         backgroundColor: '',
         '&.MuiListItemButton-root:hover': {
           backgroundColor: 'white',
         },
+        '&.MuiButton-root': {
+          minWidth: 0,
+          '&:focus': {
+            outline: 'none',
+          },
+          '&:active': {
+            outline: 'none',
+          },
+        },
         '&.MuiListItemButton-root': {
           flexWrap: 'wrap-reverse',
           gap: '0.5em',
+          padding: '1em',
         },
       },
     },
@@ -57,7 +68,7 @@ export const QuestionTheme: { [key: string]: any } = {
   MuiChip: {
     styleOverrides: {
       root: {
-        cursor: 'pointer',
+        maxHeight: '25px',
       },
     },
   },
@@ -65,6 +76,13 @@ export const QuestionTheme: { [key: string]: any } = {
     styleOverrides: {
       root: {
         zIndex: 1001,
+      },
+    },
+  },
+  MuiIconButton: {
+    styleOverrides: {
+      root: {
+        minHeight: 0,
       },
     },
   },
