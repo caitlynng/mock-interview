@@ -9,6 +9,7 @@ import { Wrapper } from './QuestionForm.styles';
 import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 import { useUpdateQuestion } from './useUpdateQuestion';
+import { getAIGeneratedQuestion } from './useAIGenerate';
 
 interface QuestionFormProps {
   updatedQuestion?: Question | undefined;
@@ -30,6 +31,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   );
   const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { handleUpdateQuestion } = useUpdateQuestion(
     question,
@@ -75,6 +78,18 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setError(false);
   };
 
+  const handleQuestionGenerating = async () => {
+    setLoading(true);
+
+    try {
+      const generatedQuestion = await getAIGeneratedQuestion();
+      setQuestion(generatedQuestion);
+    } catch (error) {
+      setErrorMessage('There was an error generating question');
+    }
+
+    setLoading(false);
+  };
   const questionOptions = [
     {
       option: 'Type',
@@ -113,10 +128,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             InputLabelProps={{
               shrink: true,
             }}
+            multiline
           />
         </FormControl>
       </Box>
-
+      <Button onClick={handleQuestionGenerating} disabled={loading}>
+        {loading ? 'Generating question...' : 'Generate a question for me'}
+      </Button>
       <Box component='form' noValidate autoComplete='off'>
         <FormControl fullWidth>
           <TextField
