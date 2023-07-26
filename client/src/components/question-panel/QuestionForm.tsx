@@ -82,7 +82,11 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     setLoading(true);
 
     try {
-      const generatedQuestion = await getAIGeneratedQuestion();
+      const generatedQuestion = await getAIGeneratedQuestion({
+        type: type,
+        difficulty: difficulty,
+        topic: topic,
+      });
       setQuestion(generatedQuestion);
     } catch (error) {
       setErrorMessage('There was an error generating question');

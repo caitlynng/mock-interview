@@ -37,7 +37,17 @@ export const deleteQuestion = async (req, res) => {
   res.status(StatusCodes.OK).json({ update });
 };
 export const getQuestion = async (req, res) => {
-  console.log("get question");
+  const getQuestionContent = () => {
+    const { topic, difficulty, type } = req.body;
+    const question = [
+      type ? `Generate an interview ${type} question` : "",
+      difficulty ? `with ${difficulty} difficulty` : "",
+      topic ? `and ${topic} concept` : "",
+    ];
+    return question.filter(Boolean).join(" ");
+  };
+
+  console.log(getQuestionContent());
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   const url = "https://api.openai.com/v1/chat/completions";
@@ -45,12 +55,16 @@ export const getQuestion = async (req, res) => {
     "Content-Type": "application/json",
     Authorization: `Bearer ${OPENAI_API_KEY}`,
   };
-
   const data = {
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "user", content: "Generate an interview behavioral question" },
+      {
+        role: "user",
+        content: getQuestionContent(),
+      },
     ],
+    max_tokens: 100,
+    temperature: 0.2,
   };
 
   async function callOpenAI() {
@@ -66,7 +80,15 @@ export const getQuestion = async (req, res) => {
       }
 
       const result = await response.json();
-      res.status(StatusCodes.OK).json({ result });
+      const questionSeparator = "Question: ";
+      let filteredResponse =
+        result?.choices[0].message.content.split(questionSeparator);
+      if (filteredResponse.length > 1) {
+        filteredResponse = filteredResponse[1];
+      } else {
+        filteredResponse = filteredResponse[0];
+      }
+      res.status(StatusCodes.OK).json({ filteredResponse });
     } catch (error) {
       // Handle any errors that occurred during the fetch request
       console.error("Error:", error);

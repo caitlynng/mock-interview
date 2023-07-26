@@ -13,6 +13,6 @@ router.route("/all-questions").get(getAllQuestions);
 router.route("/add-question").post(addQuestion);
 router.route("/edit-question").post(editQuestion);
 router.route("/delete-question").post(deleteQuestion);
-router.route("/get-question").get(getQuestion);
+router.route("/get-question").post(getQuestion);
 
 export default router;
