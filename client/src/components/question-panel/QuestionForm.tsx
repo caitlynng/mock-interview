@@ -90,29 +90,39 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
     setLoading(false);
   };
-  const questionOptions = [
-    {
-      option: 'Type',
-      selections: fieldOptions.type,
-      handleChange: handleTypeChange,
-      value: type,
-      required: true,
-    },
-    {
-      option: 'Dificulty',
-      selections: fieldOptions.difficulty,
-      handleChange: handleDifficultyChange,
-      value: difficulty,
-      required: true,
-    },
-    {
-      option: 'Topic',
-      selections: fieldOptions.topic,
-      handleChange: handleTopicChange,
-      value: topic,
-      required: true,
-    },
-  ];
+
+  const getQuestionOptions = () => {
+    let options = [
+      {
+        option: 'Type',
+        selections: fieldOptions.type,
+        handleChange: handleTypeChange,
+        value: type,
+        required: true,
+      },
+    ];
+    if (type === 'Technical') {
+      options.push(
+        {
+          option: 'Dificulty',
+          selections: fieldOptions.difficulty,
+          handleChange: handleDifficultyChange,
+          value: difficulty,
+          required: true,
+        },
+        {
+          option: 'Topic',
+          selections: fieldOptions.topic,
+          handleChange: handleTopicChange,
+          value: topic,
+          required: true,
+        },
+      );
+    }
+    return options;
+  };
+  const questionOptions = getQuestionOptions();
+
   return (
     <Wrapper>
       <QuestionFilter options={questionOptions} error={error} />
