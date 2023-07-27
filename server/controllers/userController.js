@@ -14,15 +14,66 @@ export const getAllQuestions = async (req, res) => {
 export const addQuestion = async (req, res) => {
   await Question.deleteMany({});
   const { newQuestion } = req.body;
+
+  if (!newQuestion.question || !newQuestion.type) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Missing required fields." });
+  }
+
+  if (type === "Technical" && (!difficulty || !topic)) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Missing required fields." });
+  }
+
   const addedQuestion = await Question.create({
     createdBy: req.user.userId,
     ...newQuestion,
   });
-  const addedQuestionWithID = await Question.findOne({
-    _id: addedQuestion._id,
-  });
+  const addedQuestionWithID = await Question.findOne(
+    {
+      _id: addedQuestion._id,
+    },
+    { updatedAt: 0, createdAt: 0, createdBy: 0, __v: 0 }
+  );
 
   res.status(StatusCodes.OK).json({ addedQuestionWithID });
+};
+export const addListQuestion = async (req, res) => {
+  await Question.deleteMany({});
+  const { questionList, type, topic, difficulty } = req.body;
+
+  console.log(questionList);
+  if (!questionList || !type) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Missing required fields." });
+  }
+  if (type === "Technical" && (!difficulty || !topic)) {
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: "Missing required fields." });
+  }
+  let updatedQuestionList = [];
+  await Promise.all(
+    questionList.map(async (q) => {
+      const addedQuestion = await Question.create({
+        createdBy: req.user.userId,
+        ...q,
+        difficulty: difficulty,
+        topic: topic,
+        type: type,
+      });
+      const addedQuestionWithID = await Question.findOne(
+        { _id: addedQuestion._id },
+        { updatedAt: 0, createdAt: 0, createdBy: 0, __v: 0 }
+      );
+      updatedQuestionList.push(addedQuestionWithID);
+    })
+  );
+
+  res.status(StatusCodes.OK).json({ updatedQuestionList });
 };
 export const editQuestion = async (req, res) => {
   const { _id, ...rest } = req.body.editedQuestion;
@@ -41,7 +92,7 @@ export const getQuestion = async (req, res) => {
     const { topic, difficulty, type } = req.body;
     const question = [
       type
-        ? `Create a list of 5 ${type} questions with frontend developer`
+        ? `Create a list of 2 ${type} questions with frontend developer`
         : "",
       difficulty ? `with ${difficulty} difficulty` : "",
       topic ? `and ${topic} concept` : "",
