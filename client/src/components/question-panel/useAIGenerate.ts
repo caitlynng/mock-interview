@@ -1,13 +1,9 @@
 import axiosFetch from 'hooks/axiosFetch';
-
+import { QuestionData } from 'types';
 interface getAIGeneratedQuestionProps {
   type: string | undefined;
   difficulty: string | undefined;
   topic: string | undefined;
-}
-interface QuestionData {
-  question: string;
-  answer: string;
 }
 
 export const getAIGeneratedQuestion = async ({
@@ -23,7 +19,6 @@ export const getAIGeneratedQuestion = async ({
       topic,
     });
     const data: QuestionData[] = response.data.questionList;
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error);

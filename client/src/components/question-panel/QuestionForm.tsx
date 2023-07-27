@@ -24,7 +24,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   setIsFormOpen,
 }) => {
   const [question, setQuestion] = useState<string>(
-    updatedQuestion?.content || '',
+    updatedQuestion?.question || '',
   );
   const [answer, setAnswer] = useState<string>(updatedQuestion?.answer || '');
   const [type, setType] = useState('' || updatedQuestion?.type);
@@ -34,16 +34,16 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
   const [showQuestionIdeas, setShowQuestionIdeas] = useState(false);
-  const { handleUpdateQuestion } = useUpdateQuestion(
+  const { handleUpdateQuestion } = useUpdateQuestion({
+    type,
+    topic,
+    difficulty,
     question,
     answer,
-    type || '',
-    topic || '',
-    difficulty || '',
-    setError,
-    setIsFormOpen || (() => {}),
     updatedQuestion,
-  );
+    setError,
+    setIsFormOpen,
+  });
   const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const capitalizedQuest = value
@@ -124,7 +124,12 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
       <Button onClick={handleQuestionGenerating}>Browse question ideas</Button>
       {showQuestionIdeas ? (
-        <QuestionIdeas type={type} difficulty={difficulty} topic={topic} />
+        <QuestionIdeas
+          type={type}
+          difficulty={difficulty}
+          topic={topic}
+          setIsFormOpen={setIsFormOpen}
+        />
       ) : (
         <div>
           <QuestionCard

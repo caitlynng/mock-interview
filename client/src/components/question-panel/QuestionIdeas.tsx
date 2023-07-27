@@ -2,22 +2,26 @@ import React, { ChangeEvent, useState, useEffect } from 'react';
 import { OverlayWrapper } from 'App.styles';
 import QuestionCard from './QuestionCard';
 import { getAIGeneratedQuestion } from './useAIGenerate';
-
+import Button from '@mui/material/Button';
+import { useUpdateQuestion } from './useUpdateQuestion';
+import { QuestionData } from 'types';
 interface QuestionIdeasProps {
   type: string | undefined;
   difficulty: string | undefined;
   topic: string | undefined;
+  setIsFormOpen?: (isFormOpen: boolean) => void;
 }
-interface QuestionData {
-  question: string;
-  answer: string;
-}
+
 const QuestionIdeas: React.FC<QuestionIdeasProps> = ({
   type,
   difficulty,
   topic,
+  setIsFormOpen,
 }) => {
   const [questionList, setQuestionList] = useState<QuestionData[]>([]);
+  const [filteredQuestionList, setFilteredQuestionList] = useState<
+    QuestionData[]
+  >([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
 
   useEffect(() => {
@@ -84,7 +88,21 @@ const QuestionIdeas: React.FC<QuestionIdeasProps> = ({
       }
     });
   };
+  useEffect(() => {
+    const filteredList = selectedIndices.map((index) => questionList[index]);
+    setFilteredQuestionList(filteredList);
+  }, [selectedIndices, questionList]);
+  const { handleUpdateQuestion } = useUpdateQuestion({
+    type,
+    topic,
+    difficulty,
+    questionList: filteredQuestionList,
+  });
 
+  const handleUpdateQuestionButtonClick = () => {
+    handleUpdateQuestion();
+    setIsFormOpen?.(false);
+  };
   return (
     <div>
       {questionList.map((q, index) => (
@@ -103,6 +121,20 @@ const QuestionIdeas: React.FC<QuestionIdeasProps> = ({
           />
         </div>
       ))}
+      <Button
+        variant='contained'
+        type='submit'
+        onClick={handleUpdateQuestionButtonClick}
+      >
+        Save
+      </Button>
+      <Button
+        type='button'
+        variant='text'
+        onClick={() => setIsFormOpen?.(false)}
+      >
+        Cancel
+      </Button>
     </div>
   );
 };
