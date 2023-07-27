@@ -10,6 +10,8 @@ import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 import { useUpdateQuestion } from './useUpdateQuestion';
 import { getAIGeneratedQuestion } from './useAIGenerate';
+import QuestionCard from './QuestionCard';
+import QuestionIdeas from './QuestionIdeas';
 
 interface QuestionFormProps {
   updatedQuestion?: Question | undefined;
@@ -31,9 +33,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   );
   const [topic, setTopic] = useState('' || updatedQuestion?.topic);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-
+  const [showQuestionIdeas, setShowQuestionIdeas] = useState(false);
   const { handleUpdateQuestion } = useUpdateQuestion(
     question,
     answer,
@@ -79,20 +79,11 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   };
 
   const handleQuestionGenerating = async () => {
-    setLoading(true);
-
-    try {
-      const generatedQuestion = await getAIGeneratedQuestion({
-        type: type,
-        difficulty: difficulty,
-        topic: topic,
-      });
-      setQuestion(generatedQuestion);
-    } catch (error) {
-      setErrorMessage('There was an error generating question');
+    if (!type || (type === 'Technical' && !difficulty && !topic)) {
+      setError(true);
+    } else {
+      setShowQuestionIdeas(!showQuestionIdeas);
     }
-
-    setLoading(false);
   };
 
   const getQuestionOptions = () => {
@@ -131,61 +122,39 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     <Wrapper>
       <QuestionFilter options={questionOptions} error={error} />
 
-      <Box component='form' noValidate autoComplete='off'>
-        <FormControl fullWidth>
-          <TextField
-            error={error && !question}
-            id='question'
-            label='Question'
-            value={question}
-            onChange={handleQuestionChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            multiline
-          />
-        </FormControl>
-      </Box>
-      <Button onClick={handleQuestionGenerating} disabled={loading}>
-        {loading ? 'Generating question...' : 'Generate a question for me'}
-      </Button>
-      <Box component='form' noValidate autoComplete='off'>
-        <FormControl fullWidth>
-          <TextField
-            error={error && !answer}
-            id='answer'
-            label='Answer'
-            value={answer}
-            onChange={handleAnswerChange}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            multiline
-            rows={4}
-            InputProps={{
-              style: {
-                minHeight: '100px',
-              },
-            }}
-          />
-        </FormControl>
-      </Box>
-
-      <Button variant='contained' type='submit' onClick={handleUpdateQuestion}>
-        Save
-      </Button>
-      {isFormOpen ? (
-        <Button
-          type='button'
-          variant='text'
-          onClick={() => setIsFormOpen?.(false)}
-        >
-          Cancel
-        </Button>
+      <Button onClick={handleQuestionGenerating}>Browse question ideas</Button>
+      {showQuestionIdeas ? (
+        <QuestionIdeas type={type} difficulty={difficulty} topic={topic} />
       ) : (
-        <Button type='button' variant='text' onClick={handleClearQuestion}>
-          Clear
-        </Button>
+        <div>
+          <QuestionCard
+            answer={answer}
+            question={question}
+            handleAnswerChange={handleAnswerChange}
+            handleQuestionChange={handleQuestionChange}
+            error={error}
+          />
+          <Button
+            variant='contained'
+            type='submit'
+            onClick={handleUpdateQuestion}
+          >
+            Save
+          </Button>
+          {isFormOpen ? (
+            <Button
+              type='button'
+              variant='text'
+              onClick={() => setIsFormOpen?.(false)}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button type='button' variant='text' onClick={handleClearQuestion}>
+              Clear
+            </Button>
+          )}
+        </div>
       )}
     </Wrapper>
   );

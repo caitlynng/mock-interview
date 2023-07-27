@@ -40,7 +40,9 @@ export const getQuestion = async (req, res) => {
   const getQuestionContent = () => {
     const { topic, difficulty, type } = req.body;
     const question = [
-      type ? `Generate an interview ${type} question` : "",
+      type
+        ? `Create a list of 5 ${type} questions with frontend developer`
+        : "",
       difficulty ? `with ${difficulty} difficulty` : "",
       topic ? `and ${topic} concept` : "",
     ];
@@ -63,7 +65,7 @@ export const getQuestion = async (req, res) => {
         content: getQuestionContent(),
       },
     ],
-    max_tokens: 100,
+    max_tokens: 200,
     temperature: 0.2,
   };
 
@@ -80,15 +82,16 @@ export const getQuestion = async (req, res) => {
       }
 
       const result = await response.json();
-      const questionSeparator = "Question: ";
-      let filteredResponse =
-        result?.choices[0].message.content.split(questionSeparator);
-      if (filteredResponse.length > 1) {
-        filteredResponse = filteredResponse[1];
-      } else {
-        filteredResponse = filteredResponse[0];
-      }
-      res.status(StatusCodes.OK).json({ filteredResponse });
+      const content = result?.choices[0].message.content;
+      const arrayOfQuestions = content
+        .split(/\d+\./)
+        .filter((str) => str.trim() !== "");
+      const questionList = arrayOfQuestions.map((questionText) => ({
+        question: questionText,
+        answer: "",
+      }));
+
+      res.status(StatusCodes.OK).json({ questionList });
     } catch (error) {
       // Handle any errors that occurred during the fetch request
       console.error("Error:", error);

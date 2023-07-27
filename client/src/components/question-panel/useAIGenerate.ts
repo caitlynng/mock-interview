@@ -5,12 +5,16 @@ interface getAIGeneratedQuestionProps {
   difficulty: string | undefined;
   topic: string | undefined;
 }
+interface QuestionData {
+  question: string;
+  answer: string;
+}
 
 export const getAIGeneratedQuestion = async ({
   type,
   difficulty,
   topic,
-}: getAIGeneratedQuestionProps): Promise<string> => {
+}: getAIGeneratedQuestionProps): Promise<QuestionData[]> => {
   try {
     const axiosInstance = await axiosFetch();
     const response = await axiosInstance.post('/user/get-question', {
@@ -18,7 +22,8 @@ export const getAIGeneratedQuestion = async ({
       difficulty,
       topic,
     });
-    const data: string = response.data.filteredResponse;
+    const data: QuestionData[] = response.data.questionList;
+    console.log(data);
     return data;
   } catch (error) {
     console.error(error);
