@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect, useRef } from 'react';
 import Card from '@mui/material/Card';
 import Collapse from '@mui/material/Collapse';
 import FormControl from '@mui/material/FormControl';
@@ -21,14 +21,39 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   handleAnswerChange,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const questionRef = useRef<HTMLInputElement>(null);
+  const answerRef = useRef<HTMLInputElement>(null);
 
   const handleTextFieldFocus = () => {
     setIsEditing(true);
   };
 
-  const handleTextFieldBlur = () => {
+  const handleTextFieldBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (
+      questionRef.current?.contains(event.target) ||
+      answerRef.current?.contains(event.target)
+    ) {
+      return;
+    }
     setIsEditing(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        questionRef.current &&
+        !questionRef.current.contains(event.target as Node) &&
+        answerRef.current &&
+        !answerRef.current.contains(event.target as Node)
+      ) {
+        setIsEditing(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   return (
     <Card>
@@ -37,22 +62,23 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           <TextField
             error={error && !question}
             id='question'
-            label='Question'
+            label={question ? '' : 'Question'}
             value={question}
             onChange={handleQuestionChange}
             multiline
             onFocus={handleTextFieldFocus}
             onBlur={handleTextFieldBlur}
+            inputRef={questionRef}
           />
         </FormControl>
       </Box>
-      <Collapse in={!!question || isEditing} timeout='auto' unmountOnExit>
+      <Collapse in={isEditing} timeout='auto' unmountOnExit>
         <Box component='form' noValidate autoComplete='off'>
           <FormControl fullWidth>
             <TextField
               error={error && !answer}
               id='answer'
-              label='Answer'
+              label={answer ? '' : 'Answer'}
               value={answer}
               onChange={handleAnswerChange}
               multiline
@@ -62,6 +88,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   minHeight: '100px',
                 },
               }}
+              inputRef={answerRef}
             />
           </FormControl>
         </Box>
