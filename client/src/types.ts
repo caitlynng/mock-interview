@@ -1,10 +1,14 @@
 export interface Question {
   _id?: string | undefined;
-  content: string | undefined;
+  question: string | undefined;
   topic: string | undefined;
   difficulty: string | undefined;
   answer: string | undefined;
   type: string | undefined;
+}
+export interface QuestionData {
+  question: string;
+  answer: string;
 }
 
 export const fieldOptions = {

@@ -7,21 +7,18 @@ const QuestionSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "UserId is required."],
     },
-    content: {
+    question: {
       type: String,
       required: [true, "Question is required."],
     },
     topic: {
       type: String,
-      required: [true, "Topic is required."],
     },
     difficulty: {
       type: String,
-      required: [true, "Difficulty is required."],
     },
     answer: {
       type: String,
-      required: [true, "Answer is required."],
     },
     type: {
       type: String,
