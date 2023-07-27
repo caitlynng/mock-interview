@@ -104,6 +104,7 @@ export const OverlayWrapper = styled.div`
     padding: 20px;
     border-radius: 8px;
     animation: slide-in 0.3s ease;
+    overflow: auto;
     & > h3 {
       margin-top: calc(100vh / 7);
     }

@@ -21,8 +21,8 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   const [loadingApp, setLoadingApp] = useState(true);
 
   const { uid, name, email } = useSelector((state: RootState) => state.user);
-  const storedAuthData = localStorage.getItem('auth');
   useEffect(() => {
+    const storedAuthData = localStorage.getItem('auth');
     if (storedAuthData) {
       const { name, email, uid } = JSON.parse(storedAuthData);
       setCurrentUserName(name);
@@ -35,7 +35,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     }
 
     setLoadingApp(false);
-  }, [uid, name, email, storedAuthData]);
+  }, [uid, name, email]);
 
   if (loadingApp) {
     return <LoadingPageWrapper>Loading app, please wait...</LoadingPageWrapper>;

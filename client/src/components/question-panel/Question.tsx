@@ -91,69 +91,73 @@ const QuestionComponent: React.FC<QuestionProps> = ({ question, index }) => {
           }}
         >
           <Stack direction='row' spacing={1}>
-            <Chip label={question.type} />
-            <Chip label={question.difficulty} />
-            <Chip label={question.topic} />
+            {question.type && <Chip label={question.type} />}
+            {question.difficulty && <Chip label={question.difficulty} />}
+            {question.topic && <Chip label={question.topic} />}
           </Stack>
           <ListItemText
-            primary={question.content}
+            primary={question.question}
             sx={{
               paddingLeft: '1em',
             }}
           />
         </ListItemButton>
         <Collapse in={open} timeout='auto' unmountOnExit>
-          <List component='div' disablePadding>
-            <div
-              style={{
-                padding: '1em 2em',
-                position: 'relative',
-              }}
-            >
-              <div>{question.answer}</div>
-              <Button
-                aria-describedby={id}
-                onClick={handleClick}
+          {question.answer ? (
+            <List component='div' disablePadding>
+              <div
                 style={{
-                  position: 'absolute',
-                  top: '0.5em',
-                  right: 0,
-                  zIndex: 1,
+                  padding: '1em 2em',
+                  position: 'relative',
                 }}
               >
-                <MoreVertIcon fontSize='medium' />
-              </Button>
-              <Popover
-                id={id}
-                open={openEditPanel}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-              >
-                <List>
-                  <ListItem disablePadding onClick={handleEdit}>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <EditIcon />
-                      </ListItemIcon>
-                      <ListItemText primary='Edit' />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding onClick={handleDelete}>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <DeleteIcon />
-                      </ListItemIcon>
-                      <ListItemText primary='Delete' />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </Popover>
-            </div>
-          </List>
+                <div>{question.answer}</div>
+                <Button
+                  aria-describedby={id}
+                  onClick={handleClick}
+                  style={{
+                    position: 'absolute',
+                    top: '0.5em',
+                    right: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  <MoreVertIcon fontSize='medium' />
+                </Button>
+                <Popover
+                  id={id}
+                  open={openEditPanel}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                >
+                  <List>
+                    <ListItem disablePadding onClick={handleEdit}>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <EditIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Edit' />
+                      </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding onClick={handleDelete}>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          <DeleteIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Delete' />
+                      </ListItemButton>
+                    </ListItem>
+                  </List>
+                </Popover>
+              </div>
+            </List>
+          ) : (
+            <Button onClick={handleEdit}> Add an answer</Button>
+          )}
         </Collapse>
       </List>
     );
