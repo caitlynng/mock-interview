@@ -12,7 +12,7 @@ export const getAllQuestions = async (req, res) => {
 };
 
 export const addQuestion = async (req, res) => {
-  await Question.deleteMany({});
+  // await Question.deleteMany({});
   const { newQuestion } = req.body;
 
   if (!newQuestion.question || !newQuestion.type) {
@@ -41,7 +41,7 @@ export const addQuestion = async (req, res) => {
   res.status(StatusCodes.OK).json({ addedQuestionWithID });
 };
 export const addListQuestion = async (req, res) => {
-  await Question.deleteMany({});
+  // await Question.deleteMany({});
   const { questionList, type, topic, difficulty } = req.body;
 
   console.log(questionList);

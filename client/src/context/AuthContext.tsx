@@ -37,6 +37,11 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     setLoadingApp(false);
   }, [uid, name, email]);
 
+  useEffect(() => {
+    if (currentUserId === undefined) {
+      localStorage.removeItem('auth');
+    }
+  }, [currentUserId]);
   if (loadingApp) {
     return <LoadingPageWrapper>Loading app, please wait...</LoadingPageWrapper>;
   }

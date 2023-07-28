@@ -14,6 +14,8 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
     return children;
   }
 
+  localStorage.removeItem('auth');
+
   return <Navigate to='/login' state={{ from: location }} replace />;
 };
 
