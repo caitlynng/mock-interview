@@ -5,4 +5,5 @@ export const InterviewWrapper = styled.main`
   height: 100%;
   max-width: 1500px;
   margin: 0 auto;
+  position: relative;
 `;
