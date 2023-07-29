@@ -59,9 +59,21 @@ export const materialDefaultTheme: { [key: string]: object } = {
   MuiButton: {
     styleOverrides: {
       root: {
+        color: primaryColor,
         textTransform: 'capitalize',
         '&:hover': {
           backgroundColor: 'transparent',
+        },
+      },
+    },
+  },
+  MuiSelect: {
+    styleOverrides: {
+      root: {
+        borderRadius: '25px',
+        backgroundColor: '#fff',
+        '& > div': {
+          padding: '14px',
         },
       },
     },
