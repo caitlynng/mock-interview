@@ -1,15 +1,11 @@
 import React, { useState, ChangeEvent } from 'react';
-import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import { Wrapper } from './QuestionForm.styles';
+import { Wrapper } from './QuestionFilter.styles';
 import { Question, fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 import { useUpdateQuestion } from './useUpdateQuestion';
-import { getAIGeneratedQuestion } from './useAIGenerate';
 import QuestionCard from './QuestionCard';
 import QuestionIdeas from './QuestionIdeas';
 
@@ -120,9 +116,17 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
   return (
     <Wrapper>
-      <QuestionFilter options={questionOptions} error={error} />
+      <QuestionFilter
+        options={questionOptions}
+        error={error}
+        resetBtn={handleClearQuestion}
+      />
 
-      <Button onClick={handleQuestionGenerating}>Browse question ideas</Button>
+      {!updatedQuestion && (
+        <Button onClick={handleQuestionGenerating}>
+          Browse question ideas
+        </Button>
+      )}
       {showQuestionIdeas ? (
         <QuestionIdeas
           type={type}
@@ -146,19 +150,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
           >
             Save
           </Button>
-          {isFormOpen ? (
-            <Button
-              type='button'
-              variant='text'
-              onClick={() => setIsFormOpen?.(false)}
-            >
-              Cancel
-            </Button>
-          ) : (
-            <Button type='button' variant='text' onClick={handleClearQuestion}>
-              Clear
-            </Button>
-          )}
+
+          <Button
+            type='button'
+            variant='text'
+            onClick={() => setIsFormOpen?.(false)}
+          >
+            Cancel
+          </Button>
         </div>
       )}
     </Wrapper>

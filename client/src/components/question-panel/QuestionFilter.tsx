@@ -1,10 +1,11 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
+import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { QuestionFilterWrapper } from './QuestionForm.styles';
+import { QuestionFilterWrapper } from './QuestionFilter.styles';
 
 interface QuestionOptionsProps {
   options: {
@@ -15,14 +16,19 @@ interface QuestionOptionsProps {
     required: boolean;
   }[];
   error: boolean;
+  resetBtn: () => void;
 }
 
-const QuestionFilter: React.FC<QuestionOptionsProps> = ({ options, error }) => {
+const QuestionFilter: React.FC<QuestionOptionsProps> = ({
+  options,
+  error,
+  resetBtn,
+}) => {
   return (
     <QuestionFilterWrapper>
       {options.map((item, index) => {
         return (
-          <Box sx={{ minWidth: 50, flex: 1 }} key={index}>
+          <Box sx={{ minWidth: 150, flex: 1, maxWidth: 200 }} key={index}>
             <FormControl fullWidth>
               <InputLabel id={`${item.option}-select-label`}>
                 {item.option}
@@ -47,6 +53,7 @@ const QuestionFilter: React.FC<QuestionOptionsProps> = ({ options, error }) => {
           </Box>
         );
       })}
+      <Button onClick={resetBtn}>Reset</Button>
     </QuestionFilterWrapper>
   );
 };

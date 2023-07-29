@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { RootState } from 'redux/store';
 import { SelectChangeEvent } from '@mui/material/Select';
+
 import { Question } from 'types';
 import fetchAllQuestions from './useFetchQuestions';
 import { AuthContext } from 'context/AuthContext';
@@ -10,6 +11,7 @@ import { setQuestions } from 'redux/slices/interviewSlice';
 import { fieldOptions } from 'types';
 import QuestionFilter from './QuestionFilter';
 import QuestionComponent from './Question';
+import { FilterWrapper } from './QuestionList.styles';
 
 interface QuestionListProps {
   questions: Question[];
@@ -40,29 +42,38 @@ const QuestionList: React.FC<QuestionListProps> = ({
     setType('');
     setDifficulty('');
   };
-  const questionOptions = [
-    {
-      option: 'Type',
-      selections: fieldOptions.type,
-      handleChange: handleTypeChange,
-      value: type,
-      required: false,
-    },
-    {
-      option: 'Dificulty',
-      selections: fieldOptions.difficulty,
-      handleChange: handleDifficultyChange,
-      value: difficulty,
-      required: false,
-    },
-    {
-      option: 'Topic',
-      selections: fieldOptions.topic,
-      handleChange: handleTopicChange,
-      value: topic,
-      required: false,
-    },
-  ];
+
+  const getQuestionOptions = () => {
+    let options = [
+      {
+        option: 'Type',
+        selections: fieldOptions.type,
+        handleChange: handleTypeChange,
+        value: type,
+        required: true,
+      },
+    ];
+    if (type === 'Technical') {
+      options.push(
+        {
+          option: 'Dificulty',
+          selections: fieldOptions.difficulty,
+          handleChange: handleDifficultyChange,
+          value: difficulty,
+          required: true,
+        },
+        {
+          option: 'Topic',
+          selections: fieldOptions.topic,
+          handleChange: handleTopicChange,
+          value: topic,
+          required: true,
+        },
+      );
+    }
+    return options;
+  };
+  const questionOptions = getQuestionOptions();
 
   useEffect(() => {
     fetchAllQuestions(currentUserId);
@@ -81,8 +92,13 @@ const QuestionList: React.FC<QuestionListProps> = ({
 
   return (
     <div>
-      <QuestionFilter options={questionOptions} error={false} />
-      <button onClick={handleResetFilter}>Reset</button>
+      <FilterWrapper>
+        <QuestionFilter
+          options={questionOptions}
+          error={false}
+          resetBtn={handleResetFilter}
+        />
+      </FilterWrapper>
       {filteredQuestions.map((question) => (
         <QuestionComponent
           question={question}
