@@ -22,7 +22,7 @@ const Interview: React.FC = () => {
       <Fab
         color='primary'
         aria-label='add-question'
-        sx={{ position: 'fixed', bottom: 50, right: 40 }}
+        sx={{ position: 'fixed', bottom: 50, right: 30 }}
         onClick={openAddQuestionPanel}
       >
         <AddIcon />
